@@ -41,5 +41,16 @@
     "vite": "^6.2.3",
     "vue": "^3.5.13",
     "vue-tsc": "^2.2.8"
+  },
+  "build": {
+    "appId": "com.example.myapp",
+    "productName": "MyApp",
+    "win": {
+      "target": "nsis"
+    },
+    "directories": {
+      "buildResources": "resources", 
+      "output": "dist_electron"
+    }
   }
 }
