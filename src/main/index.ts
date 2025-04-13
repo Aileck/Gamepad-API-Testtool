@@ -3,6 +3,23 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
+import path from 'path';
+import koffi from 'koffi';
+
+const gamepad  = koffi.load(path.join(process.cwd(), 'dlls/GamepadInputSDK.dll')); 
+
+// @ts-ignore
+const Gamepad_Result = koffi.struct('Gamepad_Result', {
+  STATUS: 'int',
+  error: 'uint32' 
+});
+
+const initialize = gamepad.func('Gamepad_Result initialize()',);
+
+const create_xbox_controller = gamepad.func('Gamepad_Result create_xbox_controller(int* id)');
+const release = gamepad.func('Gamepad_Result release()');
+const xbox_down_dpad_controller = gamepad.func('Gamepad_Result xbox_down_dpad_controller(int id)');
+
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -39,6 +56,8 @@ function createWindow(): void {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  let controllerID = -1;
+
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
@@ -51,6 +70,41 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+
+  ipcMain.handle('dll:initialize', async() => {
+    const result = await initialize();
+    console.log(result);
+    return result; 
+  });
+
+  ipcMain.handle('dll:create_xbox_controller', async() => {
+    const idBuffer = Buffer.alloc(4); 
+
+    const result = await create_xbox_controller(controllerID);
+
+    const id = idBuffer.readInt32LE();
+
+    controllerID = id;
+    console.log('返回结果:', result);
+    console.log('控制器 ID:', id);
+    
+    console.log(result);
+    return result; 
+  });
+
+  ipcMain.handle('dll:xbox_down_dpad_controller', async() => {
+    const result = await xbox_down_dpad_controller(controllerID);
+
+    return result; 
+  });
+
+  ipcMain.handle('dll:release', async() => {
+    const result = await release();
+    console.log(result);
+    return result; 
+  });
+
+
 
   createWindow()
 

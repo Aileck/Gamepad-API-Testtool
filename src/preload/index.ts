@@ -1,8 +1,14 @@
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer  } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
-const api = {}
+const api = {
+  initialize: () => ipcRenderer.invoke('dll:initialize'),
+  create_xbox_controller: () => ipcRenderer.invoke('dll:create_xbox_controller'),
+  release: () => ipcRenderer.invoke('dll:release'),
+
+  xbox_down_dpad_controller: () => ipcRenderer.invoke('dll:xbox_down_dpad_controller'),
+}
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
