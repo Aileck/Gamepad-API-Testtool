@@ -1,32 +1,32 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { XboxInput } from '../shared/enums'
+import { XboxInputPayload } from '../shared/types'
+
 import icon from '../../resources/icon.png?asset'
-
-import path from 'path';
-import koffi from 'koffi';
-
-const gamepad  = koffi.load(path.join(process.cwd(), 'dlls/GamepadInputSDK.dll')); 
-
 // @ts-ignore
-const Gamepad_Result = koffi.struct('Gamepad_Result', {
-  STATUS: 'int',
-  error: 'uint32' 
-});
+import { system, xbox } from './ffi';
 
-const initialize = gamepad.func('Gamepad_Result initialize()',);
 
-const create_xbox_controller = gamepad.func('Gamepad_Result create_xbox_controller(int* id)');
-const release = gamepad.func('Gamepad_Result release()');
-const xbox_down_dpad_controller = gamepad.func('Gamepad_Result xbox_down_dpad_controller(int id)');
+type Payload ={
+  content: number | string;
+  error: string;
+}
 
+let mainWindow : BrowserWindow | null = null;
 function createWindow(): void {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 900,
-    height: 670,
-    show: false,
-    autoHideMenuBar: true,
+    height: 800,
+    show: false,            
+    minimizable: true,
+    maximizable: true,
+    resizable: true,
+    closable: true,
+    focusable: true,    
+
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -35,7 +35,7 @@ function createWindow(): void {
   })
 
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+    mainWindow?.show()
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -72,39 +72,113 @@ app.whenReady().then(() => {
   ipcMain.on('ping', () => console.log('pong'))
 
   ipcMain.handle('dll:initialize', async() => {
-    const result = await initialize();
-    console.log(result);
+    const result = await system.initialize();
+
     return result; 
   });
 
   ipcMain.handle('dll:create_xbox_controller', async() => {
     const idBuffer = Buffer.alloc(4); 
 
-    const result = await create_xbox_controller(controllerID);
+    await xbox.create(idBuffer);
 
     const id = idBuffer.readInt32LE();
 
     controllerID = id;
-    console.log('返回结果:', result);
-    console.log('控制器 ID:', id);
     
-    console.log(result);
-    return result; 
+    mainWindow?.setFocusable(false);
+    // mainWindow?.showInactive();
+    
+    const payload: Payload = {
+      content: controllerID,
+      error: ''
+    };
+    
+    return payload; 
   });
 
-  ipcMain.handle('dll:xbox_down_dpad_controller', async() => {
-    const result = await xbox_down_dpad_controller(controllerID);
+  ipcMain.handle('dll:xbox_input', async (_, gamepadID: number, input: XboxInput, inputPayload: XboxInputPayload) => {
+    let result;
 
-    return result; 
+    switch (input) {
+      case XboxInput.A:
+        result = await xbox.input_a(gamepadID, inputPayload.isPressed);
+        break;
+      case XboxInput.B:
+        console.log(inputPayload);
+
+        result = await xbox.input_b(gamepadID, inputPayload.isPressed);
+        break;
+      case XboxInput.X:
+        result = await xbox.input_x(gamepadID, inputPayload.isPressed);
+        break;
+      case XboxInput.Y:
+        result = await xbox.input_y(gamepadID, inputPayload.isPressed);
+        break;
+      case XboxInput.UP:
+        result = await xbox.input_up(gamepadID, inputPayload.isPressed);
+        break;
+      case XboxInput.DOWN:
+        result = await xbox.input_down(gamepadID, inputPayload.isPressed);
+        break;
+      case XboxInput.LEFT:
+        result = await xbox.input_left(gamepadID, inputPayload.isPressed);
+        break;
+      case XboxInput.RIGHT:
+        result = await xbox.input_right(gamepadID, inputPayload.isPressed);
+        break;
+      case XboxInput.LB:
+        result = await xbox.input_lb(gamepadID, inputPayload.isPressed);
+        break;
+      case XboxInput.RB:
+        result = await xbox.input_rb(gamepadID, inputPayload.isPressed);
+        break;
+      case XboxInput.LT:
+        result = await xbox.input_lt(gamepadID, inputPayload.trigger);
+        break;
+      case XboxInput.RT:
+        result = await xbox.input_rt(gamepadID, inputPayload.trigger);
+        break;
+      case XboxInput.LEFT_STICK:
+        result = await xbox.input_left_stick(
+          gamepadID,
+          inputPayload.stick?.x,
+          inputPayload.stick?.y,
+        );
+        break;
+      case XboxInput.RIGHT_STICK:
+        result = await xbox.input_right_stick(
+          gamepadID,
+          inputPayload.stick?.x,
+          inputPayload.stick?.y,
+        );
+        break;
+      case XboxInput.LSB:
+        result = await xbox.input_left_analog_button(gamepadID, inputPayload.isPressed);
+        break;
+      case XboxInput.RSB:
+        result = await xbox.input_right_analog_button(gamepadID, inputPayload.isPressed);
+        break;
+      case XboxInput.BACK:
+        result = await xbox.input_back(gamepadID, inputPayload.isPressed);
+        break;
+      case XboxInput.START:
+        result = await xbox.input_start(gamepadID, inputPayload.isPressed);
+        break;
+      case XboxInput.GUIDE:
+        result = await xbox.input_guide(gamepadID, inputPayload.isPressed);
+        break;
+      default:
+        throw new Error('Invalid XboxInput');
+    }
+
+    return result;
   });
 
   ipcMain.handle('dll:release', async() => {
-    const result = await release();
-    console.log(result);
+    const result = await system.release();
     return result; 
   });
-
-
 
   createWindow()
 

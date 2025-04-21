@@ -1,19 +1,24 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
 
 type Gamepad_Result = {
-  STATUS: number;
+  status: number;
   error: number; 
 };
+
+type GamepadAPIResult = {
+  content: number | string;
+  error: string;
+}
 
 declare global {
   interface Window {
     electron: ElectronAPI
     api: {
       initialize: () => Promise<Gamepad_Result>
-      create_xbox_controller: () => Promise<Gamepad_Result>
       release: () => Promise<Gamepad_Result>
     
-      xbox_down_dpad_controller: () => Promise<Gamepad_Result>
+      create_xbox_controller: () => Promise<GamepadAPIResult>
+      xbox_input: (id, input, payload) => Promise<Gamepad_Result>
     }  
   }
 }

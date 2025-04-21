@@ -1,68 +1,135 @@
 <script setup lang="ts">
-import Versions from './components/Versions.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
-const ipcHandle = (): void => window.electron.ipcRenderer.send('ping');
+import XboxCard from './components/Xbox.vue'
 
-// 狀態回傳顯示
 const resultMessage = ref('')
+const gamepads = ref<{ id: number; type: string}[]>([]) 
 
-// 封裝的函式呼叫
 const handleInitialize = async () => {
   const result = await window.api.initialize()
-  resultMessage.value = `Init => STATUS: ${result.STATUS}, ERROR: ${result.error}`
+  resultMessage.value = `Init => STATUS: ${result.status}, ERROR: ${result.error}`
 }
 
-const handleCreateController = async () => {
+const handleCreateXboxController = async () => {
   const result = await window.api.create_xbox_controller()
-  resultMessage.value = `Create => STATUS: ${result.STATUS}, ERROR: ${result.error}`
-}
-
-const handleDpadDown = async () => {
-  while (true) {
-    const result = await window.api.xbox_down_dpad_controller()
-    resultMessage.value = `D-Pad Down => STATUS: ${result.STATUS}, ERROR: ${result.error}`
+  if (result.error) {
+    resultMessage.value = `Cannot create controller`
+    return
   }
+
+  resultMessage.value = `Create Controller ${result.content} => SUCCESS`
+  
+  gamepads.value.push({ id: result.content as number, type: "Xbox" })
 }
 
 const handleRelease = async () => {
   const result = await window.api.release()
-  resultMessage.value = `Release => STATUS: ${result.STATUS}, ERROR: ${result.error}`
+
+  resultMessage.value = `Release => STATUS: ${result.status}, ERROR: ${result.error}`
 }
+
+// Initialize the gamepad controller on component mount
+handleInitialize();
+
+const scalerStyle = ref({})
+
+const baseWidth = 1440  
+const baseHeight = 900 
+
+function updateScale() {
+  const scaleX = window.innerWidth / baseWidth
+  const scaleY = window.innerHeight / baseHeight
+  const scale = Math.min(scaleX, scaleY)
+  
+  scalerStyle.value = {
+    transform: `scale(${scale})`,
+    transformOrigin: 'top left',
+    width: `${baseWidth}px`,
+    height: `${baseHeight}px`,
+  }
+}
+
+onMounted(() => {
+  updateScale()
+  window.addEventListener('resize', updateScale)
+})
 </script>
 
 <template>
-  <img alt="logo" class="logo" src="./assets/electron.svg" />
-  <div class="creator">Powered by electron-vite</div>
-  <div class="text">
-    Build an Electron app with
-    <span class="vue">Vue</span>
-    and
-    <span class="ts">TypeScript</span>
-  </div>
-  <p class="tip">Press <code>F12</code> to open devTools</p>
-
   <div class="actions">
-    <div class="action">
-      <a @click="ipcHandle">Send IPC (ping)</a>
-    </div>
-    <div class="action">
-      <button @click="handleInitialize">Initialize Controller</button>
-    </div>
-    <div class="action">
-      <button @click="handleCreateController">Create Xbox Controller</button>
-    </div>
-    <div class="action">
-      <button @click="handleDpadDown">D-pad Down</button>
-    </div>
-    <div class="action">
-      <button @click="handleRelease">Release Controller</button>
+    <button @click="handleCreateXboxController">Create XBOX controller</button>
+    <button @click="handleRelease">Release</button>
+  </div>
+  <div class="scroll-wrapper">
+    <div class="controllers">
+      <div
+        v-for="gamepad in gamepads"
+        :key="gamepad.id"
+        class="controller"
+      >
+      <XboxCard :id="gamepad.id"></XboxCard>
+      </div>
     </div>
   </div>
 
   <p class="tip">
     Result: {{ resultMessage }}
   </p>
-
-  <Versions />
 </template>
+
+<style>
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* .controllers {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.controller {
+  border: 1px solid hsl(0, 0%, 80%);
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+} */
+
+.scroll-wrapper {
+  overflow-x: auto;
+  width: 100vw;
+}
+
+.controllers {
+  display: flex;
+  flex-direction: row;
+  width: max-content;
+  gap: 1rem;
+}
+
+.controller {
+  border: 1px solid hsl(0, 0%, 80%);
+  padding: 20px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.gamepad-layout {
+  margin: 20px auto;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.gamepad-layout td {
+  padding: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+</style>
