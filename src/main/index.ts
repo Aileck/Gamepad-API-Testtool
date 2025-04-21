@@ -1,12 +1,12 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { XboxInput } from '../shared/enums'
-import { XboxInputPayload } from '../shared/types'
+import { XboxInput, DS4Input } from '../shared/enums'
+import { InputPayload } from '../shared/types'
 
 import icon from '../../resources/icon.png?asset'
 // @ts-ignore
-import { system, xbox } from './ffi';
+import { system, xbox, dualshock4 } from './ffi';
 
 
 type Payload ={
@@ -73,7 +73,8 @@ app.whenReady().then(() => {
 
   ipcMain.handle('dll:initialize', async() => {
     const result = await system.initialize();
-
+    mainWindow?.setFocusable(false);
+    mainWindow?.setAlwaysOnTop(true, 'screen-saver', 1);
     return result; 
   });
 
@@ -86,7 +87,6 @@ app.whenReady().then(() => {
 
     controllerID = id;
     
-    mainWindow?.setFocusable(false);
     // mainWindow?.showInactive();
     
     const payload: Payload = {
@@ -97,7 +97,7 @@ app.whenReady().then(() => {
     return payload; 
   });
 
-  ipcMain.handle('dll:xbox_input', async (_, gamepadID: number, input: XboxInput, inputPayload: XboxInputPayload) => {
+  ipcMain.handle('dll:xbox_input', async (_, gamepadID: number, input: XboxInput, inputPayload: InputPayload) => {
     let result;
 
     switch (input) {
@@ -175,8 +175,116 @@ app.whenReady().then(() => {
     return result;
   });
 
+  ipcMain.handle('dll:create_ds4_controller', async() => {
+    const idBuffer = Buffer.alloc(4);
+    await dualshock4.create(idBuffer);
+    const id = idBuffer.readInt32LE();
+    controllerID = id;
+    mainWindow?.setFocusable(false);
+    // mainWindow?.showInactive();
+    const payload: Payload = {
+      content: controllerID,
+      error: ''
+    };
+    return payload;
+  });
+
+  ipcMain.handle('dll:ds4_input', async (_, gamepadID: number, input: DS4Input, inputPayload: InputPayload) => {
+    let result;
+
+    switch (input) {
+      case DS4Input.CROSS:
+        result = await dualshock4.input_cross(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.CIRCLE:
+        result = await dualshock4.input_circle(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.SQUARE:
+        result = await dualshock4.input_square(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.TRIANGLE:
+        result = await dualshock4.input_triangle(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.UP:
+        result = await dualshock4.input_up(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.DOWN:
+        result = await dualshock4.input_down(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.LEFT:
+        result = await dualshock4.input_left(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.RIGHT:
+        result = await dualshock4.input_right(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.UP_LEFT:
+        result = await dualshock4.input_up_left(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.UP_RIGHT:
+        result = await dualshock4.input_up_right(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.DOWN_LEFT:
+        result = await dualshock4.input_down_left(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.DOWN_RIGHT:
+        result = await dualshock4.input_down_right(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.L1:
+        result = await dualshock4.input_l1(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.R1:
+        result = await dualshock4.input_r1(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.L2:
+        result = await dualshock4.input_l2(gamepadID, inputPayload.trigger);
+        break;
+      case DS4Input.R2:
+        result = await dualshock4.input_r2(gamepadID, inputPayload.trigger);
+        break;
+      case DS4Input.L3:
+        result = await dualshock4.input_l3(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.R3:
+        result = await dualshock4.input_r3(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.LEFT_STICK:
+        result = await dualshock4.input_left_stick(
+          gamepadID,
+          inputPayload.stick?.x,
+          inputPayload.stick?.y,
+        );
+        break;
+      case DS4Input.RIGHT_STICK:
+        result = await dualshock4.input_right_stick(
+          gamepadID,
+          inputPayload.stick?.x,
+          inputPayload.stick?.y,
+        );
+        break;
+      case DS4Input.SHARE:
+        result = await dualshock4.input_share(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.OPTIONS:
+        result = await dualshock4.input_options(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.TOUCHPAD:
+        result = await dualshock4.input_touchpad(gamepadID, inputPayload.isPressed);
+        break;
+      case DS4Input.PS:
+        result = await dualshock4.input_ps(gamepadID, inputPayload.isPressed);
+        break;
+      default:
+        throw new Error('Invalid DS4Input');
+    }
+    return result; 
+  });
+
   ipcMain.handle('dll:release', async() => {
     const result = await system.release();
+
+    mainWindow?.setFocusable(true);
+    mainWindow?.setAlwaysOnTop(false, 'screen-saver', 1);
+
     return result; 
   });
 

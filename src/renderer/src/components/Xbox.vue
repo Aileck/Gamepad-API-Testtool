@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { XboxInput } from '../../../shared/enums'
-import { XboxInputPayload } from '../../../shared/types'
+import { InputPayload } from '../../../shared/types'
 
 const props = defineProps({
   id: {
@@ -25,7 +25,7 @@ const toggleButton = async (input: XboxInput) => {
 }
 
 const handleXboxInputButton = async (id: number, input: XboxInput, pressed: boolean) => {
-  const payload = { isPressed: pressed } as XboxInputPayload
+  const payload = { isPressed: pressed } as InputPayload
   await window.api.xbox_input(id, input, payload)
 }
 
@@ -35,13 +35,13 @@ const handleXboxInputStick = async (id: number, input: XboxInput, valueX: number
       x: valueX,
       y: valueY
     }
-  } as XboxInputPayload
+  } as InputPayload
   
   await window.api.xbox_input(id, input, payload)
 }
 
 const handleXboxInputTrigger = async (id: number, input: XboxInput, value: number) => {
-  const payload = { trigger: value } as XboxInputPayload
+  const payload = { trigger: value } as InputPayload
   
   await window.api.xbox_input(id, input, payload)
 }

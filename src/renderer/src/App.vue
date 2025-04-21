@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 
 import XboxCard from './components/Xbox.vue'
+import DualShockCard from './components/DualShock.vue'
 
 const resultMessage = ref('')
 const gamepads = ref<{ id: number; type: string}[]>([]) 
@@ -23,42 +24,32 @@ const handleCreateXboxController = async () => {
   gamepads.value.push({ id: result.content as number, type: "Xbox" })
 }
 
+const handleCreateDualShockController = async () => {
+  const result = await window.api.create_ds4_controller()
+  if (result.error) {
+    resultMessage.value = `Cannot create controller`
+    return
+  }
+
+  resultMessage.value = `Create Controller ${result.content} => SUCCESS`
+
+  gamepads.value.push({ id: result.content as number, type: "DualShock" })
+}
+
 const handleRelease = async () => {
   const result = await window.api.release()
-
+  gamepads.value = [];
   resultMessage.value = `Release => STATUS: ${result.status}, ERROR: ${result.error}`
 }
 
 // Initialize the gamepad controller on component mount
 handleInitialize();
-
-const scalerStyle = ref({})
-
-const baseWidth = 1440  
-const baseHeight = 900 
-
-function updateScale() {
-  const scaleX = window.innerWidth / baseWidth
-  const scaleY = window.innerHeight / baseHeight
-  const scale = Math.min(scaleX, scaleY)
-  
-  scalerStyle.value = {
-    transform: `scale(${scale})`,
-    transformOrigin: 'top left',
-    width: `${baseWidth}px`,
-    height: `${baseHeight}px`,
-  }
-}
-
-onMounted(() => {
-  updateScale()
-  window.addEventListener('resize', updateScale)
-})
 </script>
 
 <template>
   <div class="actions">
     <button @click="handleCreateXboxController">Create XBOX controller</button>
+    <button @click="handleCreateDualShockController">Create DS4 controller</button>
     <button @click="handleRelease">Release</button>
   </div>
   <div class="scroll-wrapper">
@@ -68,9 +59,18 @@ onMounted(() => {
         :key="gamepad.id"
         class="controller"
       >
-      <XboxCard :id="gamepad.id"></XboxCard>
+        <p>{{ gamepad.type }} - {{ gamepad.id }}</p>
+        <div v-if="gamepad.type === 'Xbox'">
+          <XboxCard :id="gamepad.id" />
+        </div>
+        <div v-else-if="gamepad.type === 'DualShock'">
+          <DualShockCard :id="gamepad.id" />
+        </div>
+        <div v-else>
+          <p>Unknown controller type</p>
       </div>
     </div>
+  </div>
   </div>
 
   <p class="tip">
@@ -84,19 +84,6 @@ onMounted(() => {
   gap: 10px;
   margin-bottom: 20px;
 }
-
-/* .controllers {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.controller {
-  border: 1px solid hsl(0, 0%, 80%);
-  padding: 20px;
-  border-radius: 8px;
-  width: 100%;
-} */
 
 .scroll-wrapper {
   overflow-x: auto;

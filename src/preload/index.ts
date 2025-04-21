@@ -1,16 +1,18 @@
 import { contextBridge, ipcRenderer  } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { XboxInput } from '../shared/enums'
-import { XboxInputPayload } from '../shared/types'
+import { XboxInput, DS4Input } from '../shared/enums'
+import { InputPayload } from '../shared/types'
 
 // Custom APIs for renderer
 const api = {
   initialize: () => ipcRenderer.invoke('dll:initialize'),
-  create_xbox_controller: () => ipcRenderer.invoke('dll:create_xbox_controller'),
-
   release: () => ipcRenderer.invoke('dll:release'),
 
-  xbox_input: (gamepadID: number, input: XboxInput, payload: XboxInputPayload) => ipcRenderer.invoke('dll:xbox_input', gamepadID, input, payload),
+  create_xbox_controller: () => ipcRenderer.invoke('dll:create_xbox_controller'),
+  xbox_input: (gamepadID: number, input: XboxInput, payload: InputPayload) => ipcRenderer.invoke('dll:xbox_input', gamepadID, input, payload),
+  
+  create_ds4_controller: () => ipcRenderer.invoke('dll:create_ds4_controller'),
+  ds4_input: (gamepadID: number, input: DS4Input, payload: InputPayload) => ipcRenderer.invoke('dll:ds4_input', gamepadID, input, payload),
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
