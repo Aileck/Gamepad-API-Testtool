@@ -22,6 +22,12 @@ declare global {
 
       create_ds4_controller: () => Promise<GamepadAPIResult>
       ds4_input: (id, input, payload) => Promise<Gamepad_Result>
+
+      awake_wss: () => Promise<void>
+      get_server_ip: () => Promise<stirng>
+      get_message: (callback: (event: Event, message: string) => void) => void
+      start_wss: (port: number) => Promise<void>
+      stop_wss: () => Promise<void>
     }  
   }
 }

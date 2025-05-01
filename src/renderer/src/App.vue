@@ -4,8 +4,11 @@ import { ref } from 'vue'
 import XboxCard from './components/Xbox.vue'
 import DualShockCard from './components/DualShock.vue'
 
+import LogPanel from './components/LogPanel.vue'
+
 const resultMessage = ref('')
 const gamepads = ref<{ id: number; type: string}[]>([]) 
+const logPanelRef = ref()
 
 const handleInitialize = async () => {
   const result = await window.api.initialize()
@@ -42,17 +45,37 @@ const handleRelease = async () => {
   resultMessage.value = `Release => STATUS: ${result.status}, ERROR: ${result.error}`
 }
 
+const awakeCommunication = async() => {
+  await window.api.awake_wss();
+}
+
+const startCommunication = async() => {
+  await window.api.start_wss(8080);
+  logPanelRef.value.addLog(await window.api.get_server_ip())
+}
+
 // Initialize the gamepad controller on component mount
 handleInitialize();
+
+window.api.get_message((_, message) => {
+  logPanelRef.value.addLog(`${message}`)
+})
 </script>
 
 <template>
   <div class="actions">
     <button @click="handleCreateXboxController">Create XBOX controller</button>
     <button @click="handleCreateDualShockController">Create DS4 controller</button>
+
     <button @click="handleRelease">Release</button>
   </div>
+  <div class="actions">
+    <button @click="awakeCommunication">Init Communication</button>
+    <button @click="startCommunication">Start Communication</button>
+  </div>
   <div class="scroll-wrapper">
+    <LogPanel  ref="logPanelRef" />
+
     <div class="controllers">
       <div
         v-for="gamepad in gamepads"

@@ -13,6 +13,15 @@ const api = {
   
   create_ds4_controller: () => ipcRenderer.invoke('dll:create_ds4_controller'),
   ds4_input: (gamepadID: number, input: DS4Input, payload: InputPayload) => ipcRenderer.invoke('dll:ds4_input', gamepadID, input, payload),
+
+  awake_wss: () => ipcRenderer.invoke('wss:awake'),
+  get_server_ip: () => ipcRenderer.invoke('wss:get_server_ip'),
+  
+  start_wss: (port: number) => ipcRenderer.send('wss:start', port),
+  stop_wss: () => ipcRenderer.send('wss:stop'),
+
+  get_message: (callback: (event: Electron.IpcRendererEvent, message: string) => void) => 
+    ipcRenderer.on('message-received', callback),
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

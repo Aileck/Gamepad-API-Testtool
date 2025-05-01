@@ -1,6 +1,9 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+
+import { initWebSocketManager } from './websocket'
+
 import { XboxInput, DS4Input } from '../shared/enums'
 import { InputPayload } from '../shared/types'
 
@@ -20,12 +23,12 @@ function createWindow(): void {
   mainWindow = new BrowserWindow({
     width: 900,
     height: 800,
-    show: false,            
+    show: false,
     minimizable: true,
     maximizable: true,
     resizable: true,
     closable: true,
-    focusable: true,    
+    focusable: true,
 
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -73,28 +76,29 @@ app.whenReady().then(() => {
 
   ipcMain.handle('dll:initialize', async() => {
     const result = await system.initialize();
-    mainWindow?.setFocusable(false);
+    // mainWindow?.setFocusable(false);
     mainWindow?.setAlwaysOnTop(true, 'screen-saver', 1);
-    return result; 
+    return result;
   });
 
   ipcMain.handle('dll:create_xbox_controller', async() => {
-    const idBuffer = Buffer.alloc(4); 
+    const idBuffer = Buffer.alloc(4);
 
     await xbox.create(idBuffer);
 
     const id = idBuffer.readInt32LE();
 
     controllerID = id;
-    
+
+    mainWindow?.setFocusable(false);
     // mainWindow?.showInactive();
-    
+
     const payload: Payload = {
       content: controllerID,
       error: ''
     };
-    
-    return payload; 
+
+    return payload;
   });
 
   ipcMain.handle('dll:xbox_input', async (_, gamepadID: number, input: XboxInput, inputPayload: InputPayload) => {
@@ -276,7 +280,7 @@ app.whenReady().then(() => {
       default:
         throw new Error('Invalid DS4Input');
     }
-    return result; 
+    return result;
   });
 
   ipcMain.handle('dll:release', async() => {
@@ -285,7 +289,13 @@ app.whenReady().then(() => {
     mainWindow?.setFocusable(true);
     mainWindow?.setAlwaysOnTop(false, 'screen-saver', 1);
 
-    return result; 
+    return result;
+  });
+
+  ipcMain.handle('wss:awake', async() => {
+    if (mainWindow) {
+      initWebSocketManager(mainWindow);
+    }
   });
 
   createWindow()
