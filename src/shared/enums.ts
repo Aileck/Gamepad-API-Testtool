@@ -1,3 +1,9 @@
+export enum GamepadType
+{
+    GAMEPAD_XBOX360,
+    GAMEPAD_DUALSHOCK4,
+};
+
 // Names of xbox buttons
 export enum XboxInput {
     A,

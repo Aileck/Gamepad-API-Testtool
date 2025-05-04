@@ -1,8 +1,8 @@
 // Import WebSocket to avoid 
 import { WebSocketServer, WebSocket  } from "ws";
 import { BrowserWindow, ipcMain } from "electron";
-// 添加 os 模块用于获取网络接口信息
 import { networkInterfaces } from 'os';
+import { v4 as uuidv4 } from 'uuid'; 
 
 interface WebSocketMessage {
     status: "closed" | "started" | "error";
@@ -101,10 +101,7 @@ function startServer(portNumber?: number)
         console.log(`Client connected: ${clientIp}`);
 
         ws.on('message', (message) => {
-            const messageString = message.toString();
-
-            mainWindow?.webContents.send('message-received', messageString);
-            console.log(`Received message from ${clientIp}: ${message}`);
+            handleWebSocketMessage(ws, message);
         });
 
         ws.on('close', () => {
@@ -141,8 +138,27 @@ function stopServer()
 
         wss = null;
     });
+}
 
+function handleWebSocketMessage(ws: WebSocket, message) {
+    try {
+        const messageString = message.toString();
+        const parsedData = JSON.parse(messageString);
 
+        if(parsedData.action === 'register') {
+            const clientId = uuidv4(); 
+
+            ws.send(clientId);
+        }
+
+    } catch (err) {
+        console.error('Failed to parse incoming message as JSON:', err);
+        mainWindow?.webContents.send('message-error', {
+            error: 'Invalid JSON format',
+            rawMessage: message.toString()
+        });
+        return;
+    }
 }
 
 export { initWebSocketManager };

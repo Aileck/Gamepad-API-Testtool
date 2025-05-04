@@ -8,8 +8,10 @@ import { XboxInput, DS4Input } from '../shared/enums'
 import { InputPayload } from '../shared/types'
 
 import icon from '../../resources/icon.png?asset'
-// @ts-ignore
 import { system, xbox, dualshock4 } from './ffi';
+
+import { GamepadType } from '../shared/enums'
+import { createGamepad } from './gamepadFactory'
 
 
 type Payload ={
@@ -82,19 +84,10 @@ app.whenReady().then(() => {
   });
 
   ipcMain.handle('dll:create_xbox_controller', async() => {
-    const idBuffer = Buffer.alloc(4);
-
-    await xbox.create(idBuffer);
-
-    const id = idBuffer.readInt32LE();
-
-    controllerID = id;
-
-    mainWindow?.setFocusable(false);
-    // mainWindow?.showInactive();
+    const gamepadId = await createGamepad(GamepadType.GAMEPAD_XBOX360);
 
     const payload: Payload = {
-      content: controllerID,
+      content: gamepadId,
       error: ''
     };
 
@@ -180,14 +173,10 @@ app.whenReady().then(() => {
   });
 
   ipcMain.handle('dll:create_ds4_controller', async() => {
-    const idBuffer = Buffer.alloc(4);
-    await dualshock4.create(idBuffer);
-    const id = idBuffer.readInt32LE();
-    controllerID = id;
-    mainWindow?.setFocusable(false);
-    // mainWindow?.showInactive();
+    const gamepadId = await createGamepad(GamepadType.GAMEPAD_DUALSHOCK4);
+
     const payload: Payload = {
-      content: controllerID,
+      content: gamepadId,
       error: ''
     };
     return payload;
