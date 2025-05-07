@@ -1,12 +1,29 @@
 // Import WebSocket to avoid 
 import { WebSocketServer, WebSocket  } from "ws";
+import { encode, decode } from '@msgpack/msgpack';
 import { BrowserWindow, ipcMain } from "electron";
 import { networkInterfaces } from 'os';
-import { v4 as uuidv4 } from 'uuid'; 
+import { initializeGamepadSystem, createGamepad } from './gamepadFactory'
+import { GamepadType } from '../shared/types';
+import { xbox } from "./ffi";
 
 interface WebSocketMessage {
-    status: "closed" | "started" | "error";
+    action: "handshake_ack" | "register_ack" | "error";
+    status: "ok" | "error";
+    payload: string;
 }
+
+interface ServerStatus {
+    status: "closed" | "started" | "error";
+    message?: string;
+}
+
+type WebSocketPayload = {
+    action: string;
+    id?: string;
+    gamepadType: string;
+    gamepadData?: any;
+};
 
 let wss: WebSocketServer | null = null;
 let mainWindow: BrowserWindow | null = null;
@@ -76,6 +93,8 @@ function startServer(portNumber?: number)
                 port: port,
             }
         );
+
+        initializeGamepadSystem();
         console.log(`WebSocket server started on port ${port}`);
     });
 
@@ -84,7 +103,7 @@ function startServer(portNumber?: number)
             {
                 status: "error",
                 error: error.message,
-            } as WebSocketMessage
+            } as ServerStatus
         );
         console.error(`WebSocket server error: ${error.message}`);
     });
@@ -115,7 +134,7 @@ function startServer(portNumber?: number)
             console.log(`Client disconnected: ${clientIp}`);
         });
 
-        ws.send('Welcome to the Electron WebSocket Server!');
+        // ws.send(encode('Welcome to the Electron WebSocket Server!'));
     });
 }   
 
@@ -133,29 +152,53 @@ function stopServer()
         mainWindow?.webContents.send('server-status',
             {
                 status: "closed",
-            } as WebSocketMessage
+            } as ServerStatus
         );
 
         wss = null;
     });
 }
 
-function handleWebSocketMessage(ws: WebSocket, message) {
+async function handleWebSocketMessage (ws: WebSocket, message) {
     try {
-        const messageString = message.toString();
-        const parsedData = JSON.parse(messageString);
+        const decoded = decode(message) as WebSocketPayload;
+        console.log('Received message:', decoded);
 
-        if(parsedData.action === 'register') {
-            const clientId = uuidv4(); 
+        if(decoded?.action === 'handshake') {
+            const response: WebSocketMessage = {
+                action: "handshake_ack",
+                status: "ok",
+                payload: "ok",
+            };
 
-            ws.send(clientId);
+            ws.send(encode(response));
+        } else if(decoded?.action === 'register') {
+            const clientId = await createGamepad(decoded.gamepadType as GamepadType); 
+            const response: WebSocketMessage = {
+                action: "register_ack",
+                status: "ok",
+                payload: clientId.toString(),
+            };
+            console.log('Registering gamepad:', decoded.gamepadType, clientId);
+            ws.send(encode(response));
+        } else if(decoded?.action === 'input') {
+            // const { id, gamepadType, gamepadData } = decoded;
+            // xbox
+
+        } else {
+            const response: WebSocketMessage = {
+                action: "error",
+                status: "error",
+                payload: "Invalid action",
+            };
+            ws.send(encode(response));
         }
 
     } catch (err) {
-        console.error('Failed to parse incoming message as JSON:', err);
+        console.error('Failed to decode incoming message:', err);
         mainWindow?.webContents.send('message-error', {
-            error: 'Invalid JSON format',
-            rawMessage: message.toString()
+            error: 'Invalid MessagePack format',
+            rawMessage: message
         });
         return;
     }

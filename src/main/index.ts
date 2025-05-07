@@ -10,8 +10,8 @@ import { InputPayload } from '../shared/types'
 import icon from '../../resources/icon.png?asset'
 import { system, xbox, dualshock4 } from './ffi';
 
-import { GamepadType } from '../shared/enums'
-import { createGamepad } from './gamepadFactory'
+import { GamepadType } from '../shared/types'
+import { initializeGamepadSystem, createGamepad } from './gamepadFactory'
 
 
 type Payload ={
@@ -77,20 +77,20 @@ app.whenReady().then(() => {
   ipcMain.on('ping', () => console.log('pong'))
 
   ipcMain.handle('dll:initialize', async() => {
-    const result = await system.initialize();
+    const result = await initializeGamepadSystem();
     // mainWindow?.setFocusable(false);
     mainWindow?.setAlwaysOnTop(true, 'screen-saver', 1);
     return result;
   });
 
   ipcMain.handle('dll:create_xbox_controller', async() => {
-    const gamepadId = await createGamepad(GamepadType.GAMEPAD_XBOX360);
+    const gamepadId = await createGamepad("GAMEPAD_XBOX360");
 
     const payload: Payload = {
       content: gamepadId,
       error: ''
     };
-
+    mainWindow?.setFocusable(false);
     return payload;
   });
 
@@ -173,7 +173,7 @@ app.whenReady().then(() => {
   });
 
   ipcMain.handle('dll:create_ds4_controller', async() => {
-    const gamepadId = await createGamepad(GamepadType.GAMEPAD_DUALSHOCK4);
+    const gamepadId = await createGamepad("GAMEPAD_DUALSHOCK4");
 
     const payload: Payload = {
       content: gamepadId,
