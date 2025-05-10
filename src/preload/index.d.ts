@@ -25,7 +25,7 @@ declare global {
 
       awake_wss: () => Promise<void>
       get_server_ip: () => Promise<stirng>
-      get_message: (callback: (event: Event, message: string) => void) => void
+      write_to_log: (callback: (event: Event, message: string) => void) => void
       start_wss: (port: number) => Promise<void>
       stop_wss: () => Promise<void>
     }  

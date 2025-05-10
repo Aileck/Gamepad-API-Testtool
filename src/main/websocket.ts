@@ -3,9 +3,9 @@ import { WebSocketServer, WebSocket  } from "ws";
 import { encode, decode } from '@msgpack/msgpack';
 import { BrowserWindow, ipcMain } from "electron";
 import { networkInterfaces } from 'os';
-import { initializeGamepadSystem, createGamepad } from './gamepadFactory'
-import { GamepadType } from '../shared/types';
-import { xbox } from "./ffi";
+import { initializeGamepadSystem, createGamepad, xboxInput } from './gamepadFactory'
+import { GamepadData } from '../shared/types';
+import { GamepadType } from '../shared/enums';
 
 interface WebSocketMessage {
     action: "handshake_ack" | "register_ack" | "error";
@@ -20,14 +20,16 @@ interface ServerStatus {
 
 type WebSocketPayload = {
     action: string;
-    id?: string;
+    id?: number;
     gamepadType: string;
-    gamepadData?: any;
+    gamepadData?: GamepadData;
 };
 
 let wss: WebSocketServer | null = null;
 let mainWindow: BrowserWindow | null = null;
 let port: number = 8080; // Default port
+
+const clientMap: Map<string, number> = new Map(); // Store client connections by ID
 
 // Store all active communications in a Set
 const connections = new Set<WebSocket>(); 
@@ -120,7 +122,7 @@ function startServer(portNumber?: number)
         console.log(`Client connected: ${clientIp}`);
 
         ws.on('message', (message) => {
-            handleWebSocketMessage(ws, message);
+            handleWebSocketMessage(ws, message, clientIp);
         });
 
         ws.on('close', () => {
@@ -131,10 +133,13 @@ function startServer(portNumber?: number)
                 totalConnections: connections.size,
             });
 
+            if(clientMap.has(clientIp as string)) {
+                clientMap.delete(clientIp as string);
+
+                mainWindow?.webContents.send('write-log', `Client: ${clientIp} disconnected`);
+            }
             console.log(`Client disconnected: ${clientIp}`);
         });
-
-        // ws.send(encode('Welcome to the Electron WebSocket Server!'));
     });
 }   
 
@@ -159,10 +164,9 @@ function stopServer()
     });
 }
 
-async function handleWebSocketMessage (ws: WebSocket, message) {
+async function handleWebSocketMessage (ws: WebSocket, message, clientIp) {
     try {
         const decoded = decode(message) as WebSocketPayload;
-        console.log('Received message:', decoded);
 
         if(decoded?.action === 'handshake') {
             const response: WebSocketMessage = {
@@ -170,6 +174,8 @@ async function handleWebSocketMessage (ws: WebSocket, message) {
                 status: "ok",
                 payload: "ok",
             };
+
+            mainWindow?.webContents.send('write-log', `Client connected: ${clientIp}`);
 
             ws.send(encode(response));
         } else if(decoded?.action === 'register') {
@@ -179,12 +185,40 @@ async function handleWebSocketMessage (ws: WebSocket, message) {
                 status: "ok",
                 payload: clientId.toString(),
             };
+
+            clientMap.set(clientIp, clientId);
+            mainWindow?.webContents.send('write-log', `Client: ${clientIp} assigned id ${clientId} as ${decoded.gamepadType}`);
+
             console.log('Registering gamepad:', decoded.gamepadType, clientId);
+
             ws.send(encode(response));
         } else if(decoded?.action === 'input') {
-            // const { id, gamepadType, gamepadData } = decoded;
-            // xbox
+            const { id, gamepadType, gamepadData } = decoded;
 
+            if (id === -1 || !gamepadType || !gamepadData) {
+                const response: WebSocketMessage = {
+                    action: "error",
+                    status: "error",
+                    payload: "Missing id, gamepadType or gamepadData",
+                };  
+                ws.send(encode(response));
+
+                if (!id) {
+                    console.log('Missing id');
+                }
+                if (!gamepadType) {
+                    console.log('Missing gamepadType');
+                }
+                if (!gamepadData) {
+                    console.log('Missing gamepadData');
+                }
+
+                return;
+            }
+ 
+            if(gamepadType === GamepadType.Xbox) {
+                xboxInput(id as number, gamepadData as GamepadData);
+            }
         } else {
             const response: WebSocketMessage = {
                 action: "error",

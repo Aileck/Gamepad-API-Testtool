@@ -20,8 +20,8 @@ const api = {
   start_wss: (port: number) => ipcRenderer.send('wss:start', port),
   stop_wss: () => ipcRenderer.send('wss:stop'),
 
-  get_message: (callback: (event: Electron.IpcRendererEvent, message: string) => void) => 
-    ipcRenderer.on('message-received', callback),
+  write_to_log: (callback: (event: Electron.IpcRendererEvent, message: string) => void) => 
+    ipcRenderer.on('write-log', callback),
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

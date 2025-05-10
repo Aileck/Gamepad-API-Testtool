@@ -57,7 +57,7 @@ const startCommunication = async() => {
 // Initialize the gamepad controller on component mount
 handleInitialize();
 
-window.api.get_message((_, message) => {
+window.api.write_to_log((_, message) => {
   logPanelRef.value.addLog(`${message}`)
 })
 </script>

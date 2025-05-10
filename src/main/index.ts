@@ -10,7 +10,6 @@ import { InputPayload } from '../shared/types'
 import icon from '../../resources/icon.png?asset'
 import { system, xbox, dualshock4 } from './ffi';
 
-import { GamepadType } from '../shared/types'
 import { initializeGamepadSystem, createGamepad } from './gamepadFactory'
 
 
@@ -74,7 +73,6 @@ app.whenReady().then(() => {
   })
 
   // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
 
   ipcMain.handle('dll:initialize', async() => {
     const result = await initializeGamepadSystem();
