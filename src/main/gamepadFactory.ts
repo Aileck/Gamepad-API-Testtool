@@ -32,9 +32,8 @@ async function createGamepad(type: GamepadType): Promise<number> {
 // }
 
 async function xboxInput(gamepadID: number, gamepadData: GamepadData): Promise<any> {
-  // Uses array since gamepadData.leftStick and rightStick are from Unity
-  const normalizedLeftStick = normalizedXboxStick(gamepadData.leftStick[0], gamepadData.leftStick[1]);
-  const normalizedRightStick = normalizedXboxStick(gamepadData.rightStick[0], gamepadData.rightStick[1]);
+  const normalizedLeftStick = normalizedXboxStick(gamepadData.leftStickX, gamepadData.leftStickY);
+  const normalizedRightStick = normalizedXboxStick(gamepadData.rightStickX, gamepadData.rightStickY);
 
   const normalizedLeftTrigger = normalizeXboxTrigger(gamepadData.leftTrigger ? 1 : 0);
   const normalizedRightTrigger = normalizeXboxTrigger(gamepadData.rightTrigger ? 1 : 0);

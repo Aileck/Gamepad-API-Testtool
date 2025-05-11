@@ -193,6 +193,7 @@ async function handleWebSocketMessage (ws: WebSocket, message, clientIp) {
 
             ws.send(encode(response));
         } else if(decoded?.action === 'input') {
+            console.log('Input received:', decoded);
             const { id, gamepadType, gamepadData } = decoded;
 
             if (id === -1 || !gamepadType || !gamepadData) {

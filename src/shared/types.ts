@@ -24,9 +24,11 @@ export type GamepadData = {
     leftStickButton: boolean;
     rightStickButton: boolean;
 
-    // Unit vector2
-    leftStick: [number, number];  
-    rightStick: [number, number];  
+    leftStickX: number;
+    leftStickY: number;
+    
+    rightStickX: number;
+    rightStickY: number;
 
     buttonStart: boolean;
     buttonSelect: boolean;
