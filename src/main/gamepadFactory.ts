@@ -71,16 +71,43 @@ async function dualShockInput(gamepadID: number, gamepadData: GamepadData): Prom
   const normalizedLeftTrigger = normalizeTrigger(gamepadData.leftTrigger ? 1 : 0);
   const normalizedRightTrigger = normalizeTrigger(gamepadData.rightTrigger ? 1 : 0);
 
-  dualshock4.input_square(gamepadID, gamepadData.buttonNorth);
+  dualshock4.input_square(gamepadID, gamepadData.buttonWest);
   dualshock4.input_cross(gamepadID, gamepadData.buttonSouth);
   dualshock4.input_circle(gamepadID, gamepadData.buttonEast);
-  dualshock4.input_triangle(gamepadID, gamepadData.buttonWest);
+  dualshock4.input_triangle(gamepadID, gamepadData.buttonNorth);
 
-  dualshock4.input_up(gamepadID, gamepadData.up);
-  dualshock4.input_down(gamepadID, gamepadData.down);
-  dualshock4.input_left(gamepadID, gamepadData.left);
-  dualshock4.input_right(gamepadID, gamepadData.right);
-
+  // Based on inputm determine the direction
+  const { up, down, left, right } = gamepadData;
+  if (up && left) {
+    dualshock4.input_up_left(gamepadID, true);
+  }
+  else if (up && right) {
+    dualshock4.input_up_right(gamepadID, true);
+  }
+  else if (down && left) {
+    dualshock4.input_down_left(gamepadID, true);
+  }
+  else if (down && right) {
+    dualshock4.input_down_right(gamepadID, true);
+  }
+  else if (up) {
+    dualshock4.input_up(gamepadID, true);
+  }
+  else if (down) {
+    dualshock4.input_down(gamepadID, true);
+  }
+  else if (left) {
+    dualshock4.input_left(gamepadID, true);
+  }
+  else if (right) {
+    dualshock4.input_right(gamepadID, true);
+  } else {
+    dualshock4.input_up(gamepadID, false);
+    dualshock4.input_down(gamepadID, false);
+    dualshock4.input_left(gamepadID, false);
+    dualshock4.input_right(gamepadID, false);
+  }
+  
   dualshock4.input_l1(gamepadID, gamepadData.leftShoulder);
   dualshock4.input_r1(gamepadID, gamepadData.rightShoulder);
 
@@ -194,16 +221,19 @@ function normalizedXboxStick(x: number, y: number): { x: number; y: number } {
 
 function normalizedDualShockStick(x: number, y: number): { x: number; y: number } {
   function normalizeAxis(value: number): number {
-    // Clamp value between -1 and 1
     value = Math.max(-1, Math.min(1, value));
-
-    // Scale and shift to range [0, 255]
     return Math.round((value + 1) * 127.5);
+  }
+
+  function normalizeYAxis(value: number): number {
+    value = Math.max(-1, Math.min(1, value));
+    // Flip Y-axis
+    return Math.round((-value + 1) * 127.5);
   }
 
   return {
     x: normalizeAxis(x),
-    y: normalizeAxis(y),
+    y: normalizeYAxis(y),
   };
 }
 

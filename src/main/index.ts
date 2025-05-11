@@ -100,7 +100,6 @@ app.whenReady().then(() => {
         result = await xbox.input_a(gamepadID, inputPayload.isPressed);
         break;
       case XboxInput.B:
-        console.log(inputPayload);
 
         result = await xbox.input_b(gamepadID, inputPayload.isPressed);
         break;
