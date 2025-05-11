@@ -35,8 +35,8 @@ async function xboxInput(gamepadID: number, gamepadData: GamepadData): Promise<a
   const normalizedLeftStick = normalizedXboxStick(gamepadData.leftStickX, gamepadData.leftStickY);
   const normalizedRightStick = normalizedXboxStick(gamepadData.rightStickX, gamepadData.rightStickY);
 
-  const normalizedLeftTrigger = normalizeXboxTrigger(gamepadData.leftTrigger ? 1 : 0);
-  const normalizedRightTrigger = normalizeXboxTrigger(gamepadData.rightTrigger ? 1 : 0);
+  const normalizedLeftTrigger = normalizeTrigger(gamepadData.leftTrigger ? 1 : 0);
+  const normalizedRightTrigger = normalizeTrigger(gamepadData.rightTrigger ? 1 : 0);
   
   xbox.input_a(gamepadID, gamepadData.buttonSouth);
   xbox.input_b(gamepadID, gamepadData.buttonEast);
@@ -62,6 +62,39 @@ async function xboxInput(gamepadID: number, gamepadData: GamepadData): Promise<a
 
   xbox.input_back(gamepadID, gamepadData.buttonSelect);
   xbox.input_start(gamepadID, gamepadData.buttonStart);
+}
+
+async function dualShockInput(gamepadID: number, gamepadData: GamepadData): Promise<any> {
+  const normalizedLeftStick = normalizedDualShockStick(gamepadData.leftStickX, gamepadData.leftStickY);
+  const normalizedRightStick = normalizedDualShockStick(gamepadData.rightStickX, gamepadData.rightStickY);
+
+  const normalizedLeftTrigger = normalizeTrigger(gamepadData.leftTrigger ? 1 : 0);
+  const normalizedRightTrigger = normalizeTrigger(gamepadData.rightTrigger ? 1 : 0);
+
+  dualshock4.input_square(gamepadID, gamepadData.buttonNorth);
+  dualshock4.input_cross(gamepadID, gamepadData.buttonSouth);
+  dualshock4.input_circle(gamepadID, gamepadData.buttonEast);
+  dualshock4.input_triangle(gamepadID, gamepadData.buttonWest);
+
+  dualshock4.input_up(gamepadID, gamepadData.up);
+  dualshock4.input_down(gamepadID, gamepadData.down);
+  dualshock4.input_left(gamepadID, gamepadData.left);
+  dualshock4.input_right(gamepadID, gamepadData.right);
+
+  dualshock4.input_l1(gamepadID, gamepadData.leftShoulder);
+  dualshock4.input_r1(gamepadID, gamepadData.rightShoulder);
+
+  dualshock4.input_l2(gamepadID, normalizedLeftTrigger);
+  dualshock4.input_r2(gamepadID, normalizedRightTrigger);
+
+  dualshock4.input_l3(gamepadID, gamepadData.leftStickButton);
+  dualshock4.input_r3(gamepadID, gamepadData.rightStickButton);
+
+  dualshock4.input_left_stick(gamepadID, normalizedLeftStick.x, normalizedLeftStick.y);
+  dualshock4.input_right_stick(gamepadID, normalizedRightStick.x, normalizedRightStick.y);
+
+  dualshock4.input_share(gamepadID, gamepadData.buttonSelect);
+  dualshock4.input_options(gamepadID, gamepadData.buttonStart);
 }
 
 async function xboxInputLegacy(gamepadID: number, input: XboxInput, inputPayload: InputPayload): Promise<any> {
@@ -159,7 +192,22 @@ function normalizedXboxStick(x: number, y: number): { x: number; y: number } {
   };
 }
 
-function normalizeXboxTrigger(value: number): number {
+function normalizedDualShockStick(x: number, y: number): { x: number; y: number } {
+  function normalizeAxis(value: number): number {
+    // Clamp value between -1 and 1
+    value = Math.max(-1, Math.min(1, value));
+
+    // Scale and shift to range [0, 255]
+    return Math.round((value + 1) * 127.5);
+  }
+
+  return {
+    x: normalizeAxis(x),
+    y: normalizeAxis(y),
+  };
+}
+
+function normalizeTrigger(value: number): number {
   // Clamp value between 0 and 1
   value = Math.max(0, Math.min(1, value));
 
@@ -171,4 +219,5 @@ export {
     createGamepad,
     xboxInputLegacy,
     xboxInput,
+    dualShockInput,
 }

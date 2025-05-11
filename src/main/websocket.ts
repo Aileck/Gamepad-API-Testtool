@@ -3,7 +3,7 @@ import { WebSocketServer, WebSocket  } from "ws";
 import { encode, decode } from '@msgpack/msgpack';
 import { BrowserWindow, ipcMain } from "electron";
 import { networkInterfaces } from 'os';
-import { initializeGamepadSystem, createGamepad, xboxInput } from './gamepadFactory'
+import { initializeGamepadSystem, createGamepad, xboxInput, dualShockInput } from './gamepadFactory'
 import { GamepadData } from '../shared/types';
 import { GamepadType } from '../shared/enums';
 
@@ -219,6 +219,8 @@ async function handleWebSocketMessage (ws: WebSocket, message, clientIp) {
  
             if(gamepadType === GamepadType.Xbox) {
                 xboxInput(id as number, gamepadData as GamepadData);
+            } else if(gamepadType === GamepadType.DualShock) {
+                dualShockInput(id as number, gamepadData as GamepadData);
             }
         } else {
             const response: WebSocketMessage = {
