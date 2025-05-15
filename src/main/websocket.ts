@@ -1,5 +1,7 @@
 // Import WebSocket to avoid 
 import { WebSocketServer, WebSocket  } from "ws";
+import https from 'https';
+import fs from 'fs';
 import { encode, decode } from '@msgpack/msgpack';
 import { BrowserWindow, ipcMain } from "electron";
 import { networkInterfaces } from 'os';
@@ -28,6 +30,12 @@ type WebSocketPayload = {
 let wss: WebSocketServer | null = null;
 let mainWindow: BrowserWindow | null = null;
 let port: number = 8080; // Default port
+const server = https.createServer(
+    {
+        key: fs.readFileSync('certs/key.pem'),
+        cert: fs.readFileSync('certs/cert.pem'),
+    }
+);
 
 const clientMap: Map<string, number> = new Map(); // Store client connections by ID
 
@@ -55,7 +63,7 @@ function initWebSocketManager(window: BrowserWindow)
 {
     mainWindow = window;
 
-    ipcMain.on('wss:start', (_, portNumber) => {
+    ipcMain.on('wss:start', async (_, portNumber) => {
         startServer(portNumber);
     });
 
@@ -86,8 +94,28 @@ function startServer(portNumber?: number)
     }
 
     port = (portNumber) ? portNumber : port; 
-    wss = new WebSocketServer({ port });
-
+    
+    server.on('request', (req, res) => {
+        res.writeHead(200);
+        res.end('WebSocket server is running');
+    });
+    
+    server.on('upgrade', (request, socket, head) => {
+        console.log('Received upgrade request from:', request.socket.remoteAddress);
+        
+        if (!wss) return socket.destroy();
+        
+        wss.handleUpgrade(request, socket, head, (ws) => {
+            wss?.emit('connection', ws, request);
+        });
+    });
+    
+    server.listen(port, () => {
+        console.log(`HTTPS Server listening on port ${port}`);
+    });
+    
+    wss = new WebSocketServer({ noServer: true }); 
+    
     wss.on('listening', () => {
         mainWindow?.webContents.send('server-status', 
             {
@@ -141,7 +169,7 @@ function startServer(portNumber?: number)
             console.log(`Client disconnected: ${clientIp}`);
         });
     });
-}   
+}
 
 function stopServer()
 {
@@ -152,15 +180,21 @@ function stopServer()
     }
 
     connections.clear();
-
-    wss?.close(() => {
+    
+    if (wss) {
+        wss.close(() => {
+            console.log('WebSocket server closed');
+            wss = null;
+        });
+    }
+    
+    server.close(() => {
+        console.log('HTTPS server closed');
         mainWindow?.webContents.send('server-status',
             {
                 status: "closed",
             } as ServerStatus
         );
-
-        wss = null;
     });
 }
 

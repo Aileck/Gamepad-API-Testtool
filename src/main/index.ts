@@ -72,6 +72,14 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
+  app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+    // Ignore certificate errors
+    // This is not recommended for production apps
+    
+    event.preventDefault();
+    callback(true);
+  });
+
   // IPC test
 
   ipcMain.handle('dll:initialize', async() => {
