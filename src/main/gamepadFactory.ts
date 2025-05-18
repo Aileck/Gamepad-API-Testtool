@@ -1,6 +1,6 @@
 import { system, xbox, dualshock4 } from './ffi';
-import { XboxInput, DS4Input, GamepadType } from '../shared/enums'
-import { InputPayload, GamepadData } from '../shared/types'
+import { GamepadType } from '../shared/enums'
+import { GamepadData } from '../shared/types'
 
 async function initializeGamepadSystem(): Promise<any> {
     const result = await system.initialize();
@@ -124,84 +124,6 @@ async function dualShockInput(gamepadID: number, gamepadData: GamepadData): Prom
   dualshock4.input_options(gamepadID, gamepadData.buttonStart);
 }
 
-async function xboxInputLegacy(gamepadID: number, input: XboxInput, inputPayload: InputPayload): Promise<any> {
-    let result;
-
-    switch (input) {
-      case XboxInput.A:
-        result = await xbox.input_a(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.B:
-        console.log(inputPayload);
-
-        result = await xbox.input_b(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.X:
-        result = await xbox.input_x(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.Y:
-        result = await xbox.input_y(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.UP:
-        result = await xbox.input_up(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.DOWN:
-        result = await xbox.input_down(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.LEFT:
-        result = await xbox.input_left(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.RIGHT:
-        result = await xbox.input_right(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.LB:
-        result = await xbox.input_lb(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.RB:
-        result = await xbox.input_rb(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.LT:
-        result = await xbox.input_lt(gamepadID, inputPayload.trigger);
-        break;
-      case XboxInput.RT:
-        result = await xbox.input_rt(gamepadID, inputPayload.trigger);
-        break;
-      case XboxInput.LEFT_STICK:
-        result = await xbox.input_left_stick(
-          gamepadID,
-          inputPayload.stick?.x,
-          inputPayload.stick?.y,
-        );
-        break;
-      case XboxInput.RIGHT_STICK:
-        result = await xbox.input_right_stick(
-          gamepadID,
-          inputPayload.stick?.x,
-          inputPayload.stick?.y,
-        );
-        break;
-      case XboxInput.LSB:
-        result = await xbox.input_left_analog_button(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.RSB:
-        result = await xbox.input_right_analog_button(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.BACK:
-        result = await xbox.input_back(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.START:
-        result = await xbox.input_start(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.GUIDE:
-        result = await xbox.input_guide(gamepadID, inputPayload.isPressed);
-        break;
-      default:
-        throw new Error('Invalid XboxInput');
-    }
-
-    return result;
-}
-
 function normalizedXboxStick(x: number, y: number): { x: number; y: number } {
   function normalizeAxis(value: number): number {
     // Clamp value between -1 and 1
@@ -247,7 +169,6 @@ function normalizeTrigger(value: number): number {
 export {
     initializeGamepadSystem,
     createGamepad,
-    xboxInputLegacy,
     xboxInput,
     dualShockInput,
 }

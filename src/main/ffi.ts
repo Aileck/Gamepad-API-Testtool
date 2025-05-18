@@ -1,8 +1,16 @@
 import koffi from 'koffi';
 import path from 'path';
-const { app } = require('electron');
+import { app } from 'electron';
 
-const gamepadLib = koffi.load(path.resolve(app.getAppPath(), 'dlls/GamepadAPI.dll'));
+// Helper function to get the correct DLL path
+function getDllPath(): string {
+  if (app.isPackaged) {
+    return path.join(process.resourcesPath, 'dlls', 'GamepadAPI.dll');
+  }
+  return path.join(app.getAppPath(), 'dlls', 'GamepadAPI.dll');
+}
+
+const gamepadLib = koffi.load(getDllPath());
 
 koffi.struct('Gamepad_Result', {
   status: 'int',

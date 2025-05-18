@@ -4,11 +4,10 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 
 import { initWebSocketManager } from './websocket'
 
-import { XboxInput, DS4Input } from '../shared/enums'
-import { InputPayload } from '../shared/types'
+import { GamepadType } from '../shared/enums'
 
 import icon from '../../resources/icon.png?asset'
-import { system, xbox, dualshock4 } from './ffi';
+import { system } from './ffi';
 
 import { initializeGamepadSystem, createGamepad } from './gamepadFactory'
 
@@ -60,8 +59,6 @@ function createWindow(): void {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  let controllerID = -1;
-
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
@@ -82,7 +79,7 @@ app.whenReady().then(() => {
   });
 
   ipcMain.handle('dll:create_xbox_controller', async() => {
-    const gamepadId = await createGamepad("GAMEPAD_XBOX360");
+    const gamepadId = await createGamepad(GamepadType.Xbox);
 
     const payload: Payload = {
       content: gamepadId,
@@ -92,181 +89,14 @@ app.whenReady().then(() => {
     return payload;
   });
 
-  ipcMain.handle('dll:xbox_input', async (_, gamepadID: number, input: XboxInput, inputPayload: InputPayload) => {
-    let result;
-
-    switch (input) {
-      case XboxInput.A:
-        result = await xbox.input_a(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.B:
-
-        result = await xbox.input_b(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.X:
-        result = await xbox.input_x(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.Y:
-        result = await xbox.input_y(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.UP:
-        result = await xbox.input_up(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.DOWN:
-        result = await xbox.input_down(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.LEFT:
-        result = await xbox.input_left(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.RIGHT:
-        result = await xbox.input_right(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.LB:
-        result = await xbox.input_lb(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.RB:
-        result = await xbox.input_rb(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.LT:
-        result = await xbox.input_lt(gamepadID, inputPayload.trigger);
-        break;
-      case XboxInput.RT:
-        result = await xbox.input_rt(gamepadID, inputPayload.trigger);
-        break;
-      case XboxInput.LEFT_STICK:
-        result = await xbox.input_left_stick(
-          gamepadID,
-          inputPayload.stick?.x,
-          inputPayload.stick?.y,
-        );
-        break;
-      case XboxInput.RIGHT_STICK:
-        result = await xbox.input_right_stick(
-          gamepadID,
-          inputPayload.stick?.x,
-          inputPayload.stick?.y,
-        );
-        break;
-      case XboxInput.LSB:
-        result = await xbox.input_left_analog_button(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.RSB:
-        result = await xbox.input_right_analog_button(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.BACK:
-        result = await xbox.input_back(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.START:
-        result = await xbox.input_start(gamepadID, inputPayload.isPressed);
-        break;
-      case XboxInput.GUIDE:
-        result = await xbox.input_guide(gamepadID, inputPayload.isPressed);
-        break;
-      default:
-        throw new Error('Invalid XboxInput');
-    }
-
-    return result;
-  });
-
   ipcMain.handle('dll:create_ds4_controller', async() => {
-    const gamepadId = await createGamepad("GAMEPAD_DUALSHOCK4");
+    const gamepadId = await createGamepad(GamepadType.DualShock);
 
     const payload: Payload = {
       content: gamepadId,
       error: ''
     };
     return payload;
-  });
-
-  ipcMain.handle('dll:ds4_input', async (_, gamepadID: number, input: DS4Input, inputPayload: InputPayload) => {
-    let result;
-
-    switch (input) {
-      case DS4Input.CROSS:
-        result = await dualshock4.input_cross(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.CIRCLE:
-        result = await dualshock4.input_circle(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.SQUARE:
-        result = await dualshock4.input_square(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.TRIANGLE:
-        result = await dualshock4.input_triangle(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.UP:
-        result = await dualshock4.input_up(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.DOWN:
-        result = await dualshock4.input_down(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.LEFT:
-        result = await dualshock4.input_left(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.RIGHT:
-        result = await dualshock4.input_right(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.UP_LEFT:
-        result = await dualshock4.input_up_left(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.UP_RIGHT:
-        result = await dualshock4.input_up_right(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.DOWN_LEFT:
-        result = await dualshock4.input_down_left(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.DOWN_RIGHT:
-        result = await dualshock4.input_down_right(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.L1:
-        result = await dualshock4.input_l1(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.R1:
-        result = await dualshock4.input_r1(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.L2:
-        result = await dualshock4.input_l2(gamepadID, inputPayload.trigger);
-        break;
-      case DS4Input.R2:
-        result = await dualshock4.input_r2(gamepadID, inputPayload.trigger);
-        break;
-      case DS4Input.L3:
-        result = await dualshock4.input_l3(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.R3:
-        result = await dualshock4.input_r3(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.LEFT_STICK:
-        result = await dualshock4.input_left_stick(
-          gamepadID,
-          inputPayload.stick?.x,
-          inputPayload.stick?.y,
-        );
-        break;
-      case DS4Input.RIGHT_STICK:
-        result = await dualshock4.input_right_stick(
-          gamepadID,
-          inputPayload.stick?.x,
-          inputPayload.stick?.y,
-        );
-        break;
-      case DS4Input.SHARE:
-        result = await dualshock4.input_share(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.OPTIONS:
-        result = await dualshock4.input_options(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.TOUCHPAD:
-        result = await dualshock4.input_touchpad(gamepadID, inputPayload.isPressed);
-        break;
-      case DS4Input.PS:
-        result = await dualshock4.input_ps(gamepadID, inputPayload.isPressed);
-        break;
-      default:
-        throw new Error('Invalid DS4Input');
-    }
-    return result;
   });
 
   ipcMain.handle('dll:release', async() => {

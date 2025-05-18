@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import XboxCard from './components/Xbox.vue'
-import DualShockCard from './components/DualShock.vue'
-
 import LogPanel from './components/LogPanel.vue'
 
 const resultMessage = ref('')

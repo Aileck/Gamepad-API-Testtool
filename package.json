@@ -55,6 +55,18 @@
     "directories": {
       "buildResources": "resources",
       "output": "dist_electron"
-    }
+    },
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/koffi/**/*",
+      "**/*.node"
+    ],
+    "extraResources": [
+      {
+        "from": "dlls",
+        "to": "dlls",
+        "filter": ["**/*"]
+      }
+    ]
   }
 }

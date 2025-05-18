@@ -18,10 +18,7 @@ declare global {
       release: () => Promise<Gamepad_Result>
     
       create_xbox_controller: () => Promise<GamepadAPIResult>
-      xbox_input: (id, input, payload) => Promise<Gamepad_Result>
-
       create_ds4_controller: () => Promise<GamepadAPIResult>
-      ds4_input: (id, input, payload) => Promise<Gamepad_Result>
 
       awake_wss: () => Promise<void>
       get_server_ip: () => Promise<stirng>

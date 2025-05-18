@@ -1,9 +1,3 @@
- export type InputPayload = {
-    isPressed?: boolean;
-    stick?: { x: number; y: number };
-    trigger?: number;
-}
-
 export type GamepadData = {
     buttonEast: boolean;
     buttonWest: boolean;
