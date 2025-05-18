@@ -31,7 +31,7 @@ async function createGamepad(type: GamepadType): Promise<number> {
 //     return result;
 // }
 
-async function xboxInput(gamepadID: number, gamepadData: GamepadData): Promise<any> {
+async function xboxInput(gamepadID: number, gamepadData: GamepadData, delayCounter?: any): Promise<any> {
   const normalizedLeftStick = normalizedXboxStick(gamepadData.leftStickX, gamepadData.leftStickY);
   const normalizedRightStick = normalizedXboxStick(gamepadData.rightStickX, gamepadData.rightStickY);
 
@@ -62,9 +62,13 @@ async function xboxInput(gamepadID: number, gamepadData: GamepadData): Promise<a
 
   xbox.input_back(gamepadID, gamepadData.buttonSelect);
   xbox.input_start(gamepadID, gamepadData.buttonStart);
+
+  if(delayCounter) {
+    delayCounter();
+  }
 }
 
-async function dualShockInput(gamepadID: number, gamepadData: GamepadData): Promise<any> {
+async function dualShockInput(gamepadID: number, gamepadData: GamepadData, delayCounter?: any): Promise<any> {
   const normalizedLeftStick = normalizedDualShockStick(gamepadData.leftStickX, gamepadData.leftStickY);
   const normalizedRightStick = normalizedDualShockStick(gamepadData.rightStickX, gamepadData.rightStickY);
 
@@ -122,6 +126,10 @@ async function dualShockInput(gamepadID: number, gamepadData: GamepadData): Prom
 
   dualshock4.input_share(gamepadID, gamepadData.buttonSelect);
   dualshock4.input_options(gamepadID, gamepadData.buttonStart);
+
+  if(delayCounter) {
+    delayCounter();
+  }
 }
 
 function normalizedXboxStick(x: number, y: number): { x: number; y: number } {

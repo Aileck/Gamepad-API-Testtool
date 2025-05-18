@@ -8,7 +8,9 @@ import { GamepadData } from '../shared/types';
 import { GamepadType } from '../shared/enums';
 
 interface WebSocketMessage {
-    action: "handshake_ack" | "register_ack" | "error";
+    action: "handshake_ack" | "register_ack" 
+            | "delay_test_request" | "delay_test_end"
+            | "error";
     status: "ok" | "error";
     payload: string;
 }
@@ -18,22 +20,63 @@ interface ServerStatus {
     message?: string;
 }
 
-type WebSocketPayload = {
+type WebSocketGamepadPayload = {
     action: string;
     id?: number;
+
     gamepadType: string;
     gamepadData?: GamepadData;
+    timestamp?: number;
+};
+
+type WebSocketPingPayload = {
+    action: string;
+    id: number;
+
+    timestamp: number;
+    payload: string;
 };
 
 let wss: WebSocketServer | null = null;
 let mainWindow: BrowserWindow | null = null;
 let port: number = 8080; // Default port
 
-const clientMap: Map<string, number> = new Map(); // Store client connections by ID
+interface ClientData {
+    ip: string;
+    websocket: WebSocket;
+
+    // Connection test data
+    isTestingDelay: boolean;
+    // The time when server sent the message
+    T1: number;
+    // The time when client received the message
+    T2: number;
+    // The time when client sent the message
+    T3: number;
+    // The time when server received the message
+    T4: number;
+
+    rtt: number; // Round trip time
+}
+
+const clientMap: Map<number, ClientData> = new Map(); // Store client connections by ID
 
 // Store all active communications in a Set
-const connections = new Set<WebSocket>(); 
+const connections = new Set<WebSocket>();
 
+function newClientData(ip: string, websocket: WebSocket): ClientData {
+    return {
+        ip,
+        websocket,
+
+        isTestingDelay: false,
+        T1: 0,
+        T2: 0,
+        T3: 0,
+        T4: 0,
+        rtt: 0,
+    };
+}
 function getLocalIpAddresses(): string[] {
     const nets = networkInterfaces();
     const results: string[] = [];
@@ -110,7 +153,7 @@ function startServer(portNumber?: number)
         console.error(`WebSocket server error: ${error.message}`);
     });
     
-    wss.on('connection', (ws, req) => {
+    wss.on('connection', (ws, req) => {        
         const clientIp = req.socket.remoteAddress;
         connections.add(ws);
 
@@ -122,10 +165,29 @@ function startServer(portNumber?: number)
         console.log(`Client connected: ${clientIp}`);
 
         ws.on('message', (message) => {
-            handleWebSocketMessage(ws, message, clientIp);
+            if (clientIp) {
+                handleWebSocketMessage(ws, message, clientIp);
+            } else {
+                const response: WebSocketMessage = {
+                    action: "error",
+                    status: "error",
+                    payload: "Unknown client IP",
+                };
+                ws.send(encode(response));
+            }
         });
 
         ws.on('close', () => {
+            // Remove the client from the clientMap
+            for (const [id, data] of clientMap.entries()) {
+                const _ws = data.websocket;
+                if (_ws === ws) {
+                    clientMap.delete(id);
+                    break; 
+                }
+            }
+
+            // Remove the client from the connections set
             connections.delete(ws);
 
             mainWindow?.webContents.send('client-disconnected', {
@@ -133,11 +195,7 @@ function startServer(portNumber?: number)
                 totalConnections: connections.size,
             });
 
-            if(clientMap.has(clientIp as string)) {
-                clientMap.delete(clientIp as string);
-
-                mainWindow?.webContents.send('write-log', `Client: ${clientIp} disconnected`);
-            }
+            mainWindow?.webContents.send('write-log', `Client: ${clientIp} disconnected`);
             console.log(`Client disconnected: ${clientIp}`);
         });
     });
@@ -164,79 +222,201 @@ function stopServer()
     });
 }
 
-async function handleWebSocketMessage (ws: WebSocket, message, clientIp) {
+async function handleWebSocketMessage(ws: WebSocket, message: any, clientIp: string) {
     try {
-        const decoded = decode(message) as WebSocketPayload;
+        const decoded = decode(message) as WebSocketGamepadPayload | WebSocketPingPayload;
 
-        if(decoded?.action === 'handshake') {
-            const response: WebSocketMessage = {
-                action: "handshake_ack",
-                status: "ok",
-                payload: "ok",
-            };
+        switch (decoded?.action) {
+            case 'handshake':
+                await handleHandshake(ws, clientIp);
+                break;
 
-            mainWindow?.webContents.send('write-log', `Client connected: ${clientIp}`);
+            case 'register':
+                await handleRegister(ws, clientIp, decoded as WebSocketGamepadPayload);
+                break;
 
-            ws.send(encode(response));
-        } else if(decoded?.action === 'register') {
-            const clientId = await createGamepad(decoded.gamepadType as GamepadType); 
-            const response: WebSocketMessage = {
-                action: "register_ack",
-                status: "ok",
-                payload: clientId.toString(),
-            };
+            case 'input':
+                await handleInput(ws, decoded as WebSocketGamepadPayload);
+                break;
 
-            clientMap.set(clientIp, clientId);
-            mainWindow?.webContents.send('write-log', `Client: ${clientIp} assigned id ${clientId} as ${decoded.gamepadType}`);
+            case 'delay_test_request_ack':
+                await handleDelayTestRequestAck(decoded as WebSocketPingPayload);
+                break;
 
-            console.log('Registering gamepad:', decoded.gamepadType, clientId);
-
-            ws.send(encode(response));
-        } else if(decoded?.action === 'input') {
-            const { id, gamepadType, gamepadData } = decoded;
-
-            if (id === -1 || !gamepadType || !gamepadData) {
+            default:
                 const response: WebSocketMessage = {
                     action: "error",
                     status: "error",
-                    payload: "Missing id, gamepadType or gamepadData",
-                };  
+                    payload: "Invalid action",
+                };
                 ws.send(encode(response));
-
-                if (!id) {
-                    console.log('Missing id');
-                }
-                if (!gamepadType) {
-                    console.log('Missing gamepadType');
-                }
-                if (!gamepadData) {
-                    console.log('Missing gamepadData');
-                }
-
-                return;
-            }
- 
-            if(gamepadType === GamepadType.Xbox) {
-                xboxInput(id as number, gamepadData as GamepadData);
-            } else if(gamepadType === GamepadType.DualShock) {
-                dualShockInput(id as number, gamepadData as GamepadData);
-            }
-        } else {
-            const response: WebSocketMessage = {
-                action: "error",
-                status: "error",
-                payload: "Invalid action",
-            };
-            ws.send(encode(response));
         }
-
     } catch (err) {
         console.error('Failed to decode incoming message:', err);
         mainWindow?.webContents.send('message-error', {
             error: 'Invalid MessagePack format',
             rawMessage: message
         });
-        return;
+    }
+
+    async function handleHandshake(ws: WebSocket, clientIp: string): Promise<void> {
+        const response: WebSocketMessage = {
+            action: "handshake_ack",
+            status: "ok",
+            payload: "ok",
+        };
+        mainWindow?.webContents.send('write-log', `Client connected: ${clientIp}`);
+        ws.send(encode(response));
+    }
+
+    async function handleRegister(ws: WebSocket, clientIp: string, payload: WebSocketGamepadPayload): Promise<void> {
+        
+        const clientId = await createGamepad(payload.gamepadType as GamepadType);
+        const response: WebSocketMessage = {
+            action: "register_ack",
+            status: "ok",
+            payload: clientId.toString(),
+        };
+
+        clientMap.set(clientId, newClientData(clientIp, ws));
+
+        mainWindow?.webContents.send('write-log', `Client: ${clientIp} assigned id ${clientId} as ${payload.gamepadType as GamepadType}`);
+        ws.send(encode(response));
+
+        // Send a delay test message to the client 
+        // TODO: remove this
+        console.log('Sending delay test message to client:', clientId);
+        sendMessageToClient(clientId, "delay_test_request");
+    }
+
+    async function handleInput(ws: WebSocket, payload: WebSocketGamepadPayload): Promise<void> {
+        const { id, gamepadType, gamepadData, timestamp } = payload;
+
+        let delayCounter: (() => void) | null = null;
+        const client = clientMap.get(id as number);
+        if (client && client.isTestingDelay) {
+            const startTime = Date.now();
+            delayCounter = () => {
+                console.log(`Dispatch petition with Timestamp: ${timestamp}`);
+                const diff = Date.now() - startTime + client.rtt;
+                console.log(`Server time: ${Date.now()}`);
+                console.log(`Client timestamp: ${timestamp}`);  
+
+                console.log(`Delay: ${diff}ms`);
+            };
+        }
+
+        if (id === -1 || !gamepadType || !gamepadData) {
+            const response: WebSocketMessage = {
+                action: "error",
+                status: "error",
+                payload: "Missing id, gamepadType or gamepadData",
+            };
+            ws.send(encode(response));
+
+            if (!id) console.log('Missing id');
+            if (!gamepadType) console.log('Missing gamepadType');
+            if (!gamepadData) console.log('Missing gamepadData');
+            return;
+        }
+
+        if (gamepadType === GamepadType.Xbox) {
+            xboxInput(id as number, gamepadData as GamepadData, delayCounter);
+        } else if (gamepadType === GamepadType.DualShock) {
+            dualShockInput(id as number, gamepadData as GamepadData, delayCounter);
+        }
+    }
+
+    async function handleDelayTestRequestAck(ping: WebSocketPingPayload): Promise<void> {
+        const { id, timestamp, payload } = ping;
+
+        clientMap.get(id as number)!.T2 = timestamp;
+        clientMap.get(id as number)!.T3 = Number(payload);
+        clientMap.get(id as number)!.T4 = Date.now();
+
+        const T1 = clientMap.get(id as number)!.T1;
+        const T2 = clientMap.get(id as number)!.T2;
+        const T3 = clientMap.get(id as number)!.T3;
+        const T4 = clientMap.get(id as number)!.T4;
+
+        const rtt = ((T4 - T1) - (T3 - T2)) / 2;
+
+        clientMap.get(id as number)!.rtt = rtt;
+         mainWindow?.webContents.send('write-log', `Client: ${clientIp} has delay of ${rtt}ms`);
+
+    }
+}
+
+async function sendMessageToClient(clientId: number, action: string) {
+    console.log(`Sending message to client ${clientId}: ${action}`);
+    switch (action) {
+        case "delay_test_request":
+            HandleDelayTestRequest(clientId);
+            break;
+        // case "delay_test_start":
+        //     HandleDelayTestStart(clientId);
+        //     break;
+        case "delay_test_end":
+            HandleDelayTestEnd(clientId);
+            break;
+        default:
+            console.error(`Unknown action: ${action}`);
+            break;
+    }
+
+    function HandleDelayTestRequest(clientId: number) {
+        const now = Date.now();
+        clientMap.get(clientId)!.T1 = now;
+
+        const response: WebSocketMessage = {
+            action: "delay_test_request",
+            status: "ok",
+            // Send the current UTC time in milliseconds
+            payload: Date.now().toString(),
+        };
+        const ws = clientMap.get(clientId)?.websocket;
+        clientMap.get(clientId)!.isTestingDelay = true;
+
+        if (ws) {
+            console.log(`Last call Sending delay test message to client ${clientId}`);
+            ws.send(encode(response));
+        } else {
+            console.error(`Client ${clientId} not found`);
+        }   
+    }
+
+    
+    // function HandleDelayTestStart(clientId: number) {
+    //     const response: WebSocketMessage = {
+    //         action: "delay_test_start",
+    //         status: "ok",
+    //         // Send the current UTC time in milliseconds
+    //         payload: clientMap.get(clientId)?.rtt.toString() || "0",
+    //     };
+        
+    //     const ws = clientMap.get(clientId)?.websocket;
+    //     clientMap.get(clientId)!.isTestingDelay = true;
+
+    //     if (ws) {
+    //         console.log(`Last call Sending delay test message to client ${clientId}`);
+    //         ws.send(encode(response));
+    //     } else {
+    //         console.error(`Client ${clientId} not found`);
+    //     }   
+    // }
+
+    function HandleDelayTestEnd(clientId: number) {
+        const response: WebSocketMessage = {
+            action: "delay_test_end",
+            status: "ok",
+            payload: clientId.toString(),
+        };
+
+        const ws = clientMap.get(clientId)?.websocket;
+        clientMap.get(clientId)!.isTestingDelay = false;
+        if (ws) {
+            ws.send(encode(response));
+        }
     }
 }
 
