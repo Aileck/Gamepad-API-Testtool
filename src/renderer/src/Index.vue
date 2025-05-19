@@ -178,21 +178,22 @@ body {
 
 /* Horizontal scrolling container for player boxes */
 .player-boxes-scroll-container {
+  height: 90%;
   width: 90%;
-  max-width: 1200px;
   overflow-x: auto;
-  margin: 20px 0;
+  margin: 10px 0;
   padding: 10px 0;
 }
 
 .player-boxes-row {
   display: flex;
-  min-width: max-content; /* Ensures the container doesn't shrink */
+  width: 30%;
+  height: 100%; 
 }
 
 .player-box-wrapper {
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  height: 100%;
   margin: 0 10px;
   flex-shrink: 0; /* Prevents the boxes from shrinking */
 }
