@@ -1,0 +1,6 @@
+@font-face {
+  font-family: 'sw_like_style';
+  src: url('@/assets/fonts/kenney_input_nintendo_switch.ttf') format('ttf');
+  font-weight: normal;
+  font-style: normal;
+}

@@ -5,3 +5,6 @@ import App from './App.vue'
 import Index from './Index.vue'
 
 createApp(Index).mount('#app')
+
+// createApp(App).mount('#app')
+
