@@ -2,11 +2,11 @@
 import '../../../assets/styles/fonts.css';
 import '../../../node_modules/element-plus/dist/index.css'
 
-import { ElContainer, ElHeader, ElMain, ElFooter, ElSpace, ElButton, ElText, ElRow, ElCol, ElIcon } from 'element-plus'
+import { ElContainer, ElHeader, ElMain, ElFooter, ElSpace, ElButton, ElText, ElRow, ElCol, ElIcon, ElScrollbar } from 'element-plus'
 import { ElementPlus, DocumentCopy } from '@element-plus/icons-vue'
 
 import { ref, onMounted, computed } from 'vue'
-import GamepadBox from './components/GamepadBox.vue'; // Import the PlayerBox component
+import GamepadBox from './components/GamepadBox.vue'; // Import the GamepadBox component
 
 const sessionIP = ref("Loading IP");
 const sessionPort = ref("Loading Port");
@@ -73,18 +73,30 @@ onMounted(() => {
           on the controller.
         </div>
 
-        <!-- Player boxes container - horizontal scrolling -->
-        <div class="player-boxes-scroll-container">
-          <div class="player-boxes-row">
-            <div v-for="(playerNum, index) in playerSlots" :key="index" class="player-box-wrapper">
-              <GamepadBox :player-number="index + 1" :active="playerNum !== null" />
-            </div>
-          </div>
+        <!-- GamepadBox container - responsive layout -->
+        <div class="gamepadbox-container">
+          <!-- Using Element Plus Scrollbar for vertical scrolling -->
+          <el-scrollbar height="60vh" class="gamepadbox-scrollbar">
+            <el-row :gutter="20" class="gamepadbox-grid">
+              <!-- Loop through player slots and create responsive columns -->              <el-col 
+                v-for="(playerNum, index) in playerSlots" 
+                :key="index"                
+                :xs="24"
+                :sm="12"
+                :md="12"
+                class="gamepadbox-col"
+              >
+                <div class="gamepadbox-wrapper">
+                  <GamepadBox :player-number="index + 1" :active="playerNum !== null" />
+                </div>
+              </el-col>
+            </el-row>
+          </el-scrollbar>
         </div>
       </div>
     </el-main>
 
-    <el-footer class="dark-gray-bg header-footer">
+    <el-footer class="dark-gray-bg footer-container">
       <div class="footer-content">
         <el-button>{{ sessionIP }}</el-button>
       </div>
@@ -117,33 +129,22 @@ body {
   height: 15vh;
 }
 
-.header-footer {
+.footer-container {
   background-color: #6c757d;
   flex-shrink: 0;
-  height: 15vh;
+  height: 10vh;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
 }
 
-.button-back span {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 24px;
-  height: 24px;
-  background-color: white;
-  color: #000;
-  border-radius: 50%;
-}
-
 .main-content {
   background-color: #ffffff;
   color: #6c757d;
   flex: 1 1 auto;
-  overflow: auto;
   padding: 20px;
+  overflow: hidden; /* Prevent outer scrolling */
 }
 
 .controller-interface {
@@ -151,15 +152,15 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 30px;
+  gap: 20px;
+  width: 100%;
 }
 
 .controller-instructions {
   font-size: 1.5rem;
   display: flex;
   align-items: center;
-  justify-content:start;
+  justify-content: start;
   gap: 8px;
   margin: 5px 0;
 }
@@ -176,60 +177,28 @@ body {
   font-weight: bold;
 }
 
-/* Horizontal scrolling container for player boxes */
-.player-boxes-scroll-container {
-  height: 90%;
-  width: 90%;
-  overflow-x: auto;
-  margin: 10px 0;
-  padding: 10px 0;
-}
-
-.player-boxes-row {
-  display: flex;
-  width: 30%;
-  height: 100%; 
-}
-
-.player-box-wrapper {
+/* GamepadBox responsive container styles */
+.gamepadbox-container {
   width: 100%;
   height: 100%;
-  margin: 0 10px;
-  flex-shrink: 0; /* Prevents the boxes from shrinking */
 }
 
-.button-a {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 36px;
-  height: 36px;
-  background-color: #212529;
-  color: white;
-  border-radius: 50%;
-  font-weight: bold;
+.gamepadbox-grid {
+  width: 100%;
 }
 
-.demo-controls {
-  margin-top: 20px;
+.gamepadbox-col {
+  margin-bottom: 15px;
 }
 
-/* Customize scrollbar for better visibility */
-.player-boxes-scroll-container::-webkit-scrollbar {
-  height: 8px;
+.gamepadbox-wrapper {
+  height: 180px; /* Height for each GamepadBox */
 }
 
-.player-boxes-scroll-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.player-boxes-scroll-container::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-}
-
-.player-boxes-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #555;
+/* Custom styling for the Element Plus scrollbar */
+.gamepadbox-scrollbar {
+  --el-scrollbar-opacity: 0.3;
+  --el-scrollbar-hover-opacity: 0.5;
+  --el-scrollbar-width: 8px;
 }
 </style>
