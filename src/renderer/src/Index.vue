@@ -75,19 +75,19 @@ onMounted(() => {
 
         <!-- GamepadBox container - responsive layout -->
         <div class="gamepadbox-container">
-          <!-- Using Element Plus Scrollbar for vertical scrolling -->
           <el-scrollbar height="60vh" class="gamepadbox-scrollbar">
             <el-row :gutter="20" class="gamepadbox-grid">
-              <!-- Loop through player slots and create responsive columns -->              <el-col 
+              <!-- Loop through player slots and create responsive columns -->              
+               <el-col 
                 v-for="(playerNum, index) in playerSlots" 
                 :key="index"                
                 :xs="24"
-                :sm="12"
+                :sm="24"
                 :md="12"
                 class="gamepadbox-col"
               >
                 <div class="gamepadbox-wrapper">
-                  <GamepadBox :player-number="index + 1" :active="playerNum !== null" />
+                  <GamepadBox :player-number="index + 1" :system-id="1" />
                 </div>
               </el-col>
             </el-row>

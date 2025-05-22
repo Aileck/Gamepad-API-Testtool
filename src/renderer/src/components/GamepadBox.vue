@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import XboxButtonGroup from './XboxButtonGroup.vue';
+
 import { ref, defineProps, computed } from 'vue';
 import { ElCard, ElSpace, ElDivider, ElRow, ElCol, ElScrollbar } from 'element-plus';
+import { commun, xbox } from "@renderer/scripts/svgLoader"
+
 
 // Define props
 const props = defineProps({
@@ -8,14 +12,14 @@ const props = defineProps({
     type: Number,
     required: true
   },
-  active: {
-    type: Boolean,
-    default: false
+  systemId: {
+    type: Number,
+    required: true
   }
 });
 
 // Component-specific logic
-const isConnected = ref(props.active);
+const isConnected = false;
 const isReady = ref(false);
 
 // Methods to handle player box states
@@ -51,7 +55,7 @@ function setReady() {
         <div class="top-container">
           <!-- ID section (square) -->
           <div class="section square-section id-section">
-            <div class="section-content">ID<br>{{ playerNumber }}</div>
+            <div class="section-content">{{ playerNumber }}</div>
           </div>
           <!-- Device Name section -->
           <div class="section rg-cube-section">
@@ -61,19 +65,54 @@ function setReady() {
         
         <!-- Bottom row with sections -->
         <div class="bottom-container">
-          <!-- Left section (square) -->
+          <!-- Left section (Console Icon) -->
           <div class="section square-section left-section">
-            <div class="section-content">Left</div>
+            <div class="section-content icon-container">
+              <XboxIcon class="icon-content xbox" />
+            </div>
           </div>
           
-          <!-- Middle section (flexible with min-width and scroll) -->
+          <!-- Middle section (display cabinet with three parts) -->
           <el-scrollbar class="section middle-section">
-            <div class="section-content middle-content">Middle Area</div>
+            <div class="cabinet-container">
+              <!-- Top cabinet section -->
+              <div class="cabinet-section">
+                <div class="cabinet-content">
+                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
+                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
+                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
+                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
+                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
+                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
+                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
+                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
+                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
+                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
+                </div>
+              </div>
+              
+              <!-- Middle cabinet section -->
+              <div class="cabinet-section">
+                <div class="cabinet-content">
+A
+                </div>
+              </div>
+              
+              <!-- Bottom cabinet section -->
+              <div class="cabinet-section">
+                <div class="cabinet-content">
+A
+                </div>
+              </div>
+            </div>
           </el-scrollbar>
           
           <!-- Right section (square) -->
           <div class="section square-section right-section">
-            <div class="section-content">Right</div>
+            <div class="section-content">
+              Delay <br>
+              ~50ms
+            </div>
           </div>
         </div>
       </div>
@@ -124,6 +163,11 @@ function setReady() {
 .section-content {
   padding: 8px;
   font-size: 0.9em;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Top container styling */
@@ -148,6 +192,7 @@ function setReady() {
 .square-section {
   aspect-ratio: 1/1;
   flex-shrink: 0;
+  overflow: hidden; /* Prevent content from breaking the square shape */
 }
 
 /* Making sure squares have the same side length as their container height */
@@ -157,18 +202,104 @@ function setReady() {
 }
 
 .left-section, .right-section {
-  width: auto; /* Width will be determined by parent container height */
+  height: 100%; /* Full height of the bottom container */
+  width: auto; /* Width determined by aspect-ratio */
+}
+
+/* Icon container and content styling */
+.icon-container {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.icon-content {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
 }
 
 /* Middle section (flexible with min-width) */
 .middle-section {
   flex: 1;
-  min-width: 150px; /* Minimum size before scrolling */
+  min-width: 150px;
   overflow: hidden;
+  margin: 0 4px; /* Add some spacing between left and right sections */
 }
 
-.middle-content {
-  min-width: 150px;
+/* Cabinet layout styling */
+.cabinet-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.cabinet-section {
+  flex: 1;
+  border-bottom: 1px solid #e4e7ed;
+  min-height: 0;
+  overflow: auto;
+  padding: 4px;
+  flex-direction: row;
+}
+
+.cabinet-section:last-child {
+  border-bottom: none;
+}
+
+.cabinet-content {
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 4px;
+  padding: 4px;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+
+/* Individual item in the cabinet */
+.cabinet-item {
+  background-color: #fff;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding: 6px;
+  text-align: center;
+  font-size: 0.8em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  word-break: break-word;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.cabinet-item:hover {
+  background-color: #f5f7fa;
+  border-color: #c0c4cc;
+}
+
+/* Custom scrollbar for better appearance */
+.cabinet-section::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.cabinet-section::-webkit-scrollbar-track {
+  background: #f5f7fa;
+  border-radius: 3px;
+}
+
+.cabinet-section::-webkit-scrollbar-thumb {
+  background: #c0c4cc;
+  border-radius: 3px;
+}
+
+.cabinet-section::-webkit-scrollbar-thumb:hover {
+  background: #909399;
 }
 
 /* States styling */
@@ -178,5 +309,14 @@ function setReady() {
 
 .ready {
   background-color: #f0f9eb;
+}
+
+.xboxButton {
+  height: 1em;
+  width: 1em;
+}
+
+.xbox * {
+  fill: #2c5915;
 }
 </style>
