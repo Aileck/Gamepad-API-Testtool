@@ -74,37 +74,7 @@ function setReady() {
           
           <!-- Middle section (display cabinet with three parts) -->
           <el-scrollbar class="section middle-section">
-            <div class="cabinet-container">
-              <!-- Top cabinet section -->
-              <div class="cabinet-section">
-                <div class="cabinet-content">
-                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
-                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
-                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
-                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
-                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
-                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
-                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
-                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
-                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
-                  <component class="xboxButton xbox" :is="xbox.button_a_press" />
-                </div>
-              </div>
-              
-              <!-- Middle cabinet section -->
-              <div class="cabinet-section">
-                <div class="cabinet-content">
-A
-                </div>
-              </div>
-              
-              <!-- Bottom cabinet section -->
-              <div class="cabinet-section">
-                <div class="cabinet-content">
-A
-                </div>
-              </div>
-            </div>
+            <XboxButtonGroup />
           </el-scrollbar>
           
           <!-- Right section (square) -->
@@ -254,7 +224,7 @@ A
 .cabinet-content {
   grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   gap: 4px;
-  padding: 4px;
+  padding: 5px;
   width: 100%;
   height: 100%;
   min-height: 100%;
@@ -312,8 +282,8 @@ A
 }
 
 .xboxButton {
-  height: 1em;
-  width: 1em;
+  height: 1.2em;
+  width: 1.2em;
 }
 
 .xbox * {

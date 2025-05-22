@@ -1,93 +1,67 @@
 <script setup lang="ts">
-    import { defineProps } from 'vue';
-    import { commun, xbox } from "@renderer/scripts/svgLoader"
+import { xbox, commun } from "@renderer/scripts/svgLoader"
 
-    // Define props
-    const props = defineProps({
-    });
+const props = defineProps({
+  // Add props to control button count or type if needed
+})
+
+
 </script>
 
 <template>
-    <div class="cabinet-container">
-      <!-- Top cabinet section -->
-      <div class="cabinet-section">
-        <div class="cabinet-content">
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-        </div>
-      </div>
-      
-      <!-- Middle cabinet section -->
-      <div class="cabinet-section">
-        <div class="cabinet-content">
-            <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />       
-         </div>
-      </div>
-      
-      <!-- Bottom cabinet section -->
-      <div class="cabinet-section">
-        <div class="cabinet-content">
-            <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />
-          <component class="xboxButton xbox" :is="xbox.button_a_press" />        </div>
+  <div class="cabinet-container">
+    <!-- Top cabinet section -->
+    <div class="cabinet-section">
+      <div class="cabinet-content">
+        <component class="gamepad-button-small xbox" :is="commun.empty" />
+        <component class="gamepad-button-small xbox" :is="xbox.lt_release" />
+        <component class="gamepad-button-small xbox" :is="xbox.lb_release" />
+        <component class="gamepad-button-small xbox" :is="commun.empty" />
+        <component class="gamepad-button-small xbox" :is="xbox.back_release" />
+        <component class="gamepad-button-small xbox" :is="xbox.start_release" />
+        <component class="gamepad-button-small xbox" :is="commun.empty" />
+        <component class="gamepad-button-small xbox" :is="xbox.rb_release" />
+        <component class="gamepad-button-small xbox" :is="xbox.rt_release" />
+        <component class="gamepad-button-small xbox" :is="commun.empty" />
+        
       </div>
     </div>
-  </template>
-  
+    
+    <!-- Middle cabinet section -->
+    <div class="cabinet-section">
+      <div class="cabinet-content">
+        <component class="gamepad-button-small xbox" :is="commun.empty_stick" />
+        <component class="gamepad-button-small xbox" :is="commun.empty_stick" />
+        <component class="gamepad-button-small xbox" :is="xbox.ls_release" />
+        <component class="gamepad-button-small xbox" :is="commun.empty_stick" />
+        <component class="gamepad-button-small xbox" :is="commun.empty_stick" />
+        <component class="gamepad-button-small xbox" :is="commun.empty" />
+        <component class="gamepad-button-small xbox" :is="xbox.x_release" />
+        <component class="gamepad-button-small xbox" :is="xbox.y_release" />
+        <component class="gamepad-button-small xbox" :is="xbox.a_release" />
+        <component class="gamepad-button-small xbox" :is="xbox.b_release" />
+      </div>
+    </div>
+    
+    <!-- Bottom cabinet section -->
+    <div class="cabinet-section">
+      <div class="cabinet-content">                  
+        <component class="gamepad-button-small xbox" :is="commun.empty_dpad" />
+        <component class="gamepad-button-small xbox" :is="commun.empty_dpad" />
+        <component class="gamepad-button-small xbox" :is="commun.empty_dpad" />
+        <component class="gamepad-button-small xbox" :is="commun.empty_dpad" />
+        <component class="gamepad-button-small xbox" :is="commun.empty" />
+        <component class="gamepad-button-small xbox" :is="commun.empty_stick" />
+        <component class="gamepad-button-small xbox" :is="commun.empty_stick" />
+        <component class="gamepad-button-small xbox" :is="xbox.rs_release" />
+        <component class="gamepad-button-small xbox" :is="commun.empty_stick" />
+        <component class="gamepad-button-small xbox" :is="commun.empty_stick" />
+      </div>
+    </div>
+  </div>
+</template>
 
-  
-  <style scoped>
-  /* Cabinet layout styling */
-  .cabinet-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
-  }
-  
-  .cabinet-section {
-    flex: 1;
-    border-bottom: 1px solid #e4e7ed;
-    min-height: 0;
-    overflow: auto;
-    padding: 4px;
-    flex-direction: row;
-  }
-  
-  .cabinet-section:last-child {
-    border-bottom: none;
-  }
-  
-  .cabinet-content {
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 4px;
-    padding: 4px;
-    width: 100%;
-    height: 100%;
-    min-height: 100%;
-  }
-  
-  .xboxButton {
-  height: 1em;
-  width: 1em;
-}
-
-.xbox * {
-  fill: #2c5915;
-}
-  </style>
+<style>
+/* Import shared cabinet styles */
+@import '../assets/button-cabinet.css';
+</style>
