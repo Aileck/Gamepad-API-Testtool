@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import XboxButtonGroup from './XboxButtonGroup.vue';
 
-import { ref, defineProps, computed } from 'vue';
-import { ElCard, ElSpace, ElDivider, ElRow, ElCol, ElScrollbar } from 'element-plus';
-import { commun, xbox } from "@renderer/scripts/svgLoader"
+import { ref } from 'vue';
+import { ElCard, ElScrollbar } from 'element-plus';
 
 
 // Define props

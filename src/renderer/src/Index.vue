@@ -11,11 +11,9 @@ import GamepadBox from './components/GamepadBox.vue'; // Import the GamepadBox c
 const sessionIP = ref("Loading IP");
 const sessionPort = ref("Loading Port");
 const players = ref<number[]>([]); // Array to hold player indices
-const maxPlayers = ref(8); // Maximum number of players
-
+const maxGamepads = ref(0);
 // Initialize empty player slots
-const playerSlots = ref<(number | null)[]>(Array(maxPlayers.value).fill(null));
-
+const playerSlots = ref<(number | null)[]>([]);
 async function awakeCommunication() {
   await window.api.awake_wss();
 }
@@ -28,10 +26,13 @@ async function startCommunication() {
   sessionPort.value = ipInfo.port;
 }
 
-onMounted(() => {
+onMounted(async () => {
   // Start WSS and set info text to user
   awakeCommunication();
   startCommunication();
+
+  maxGamepads.value = await window.api.getMaxGamepads();
+  playerSlots.value = Array(maxGamepads.value).fill(null);
 })
 </script>
 

@@ -22,6 +22,7 @@ declare global {
 
       awake_wss: () => Promise<void>
       get_server_ip: () => Promise<stirng>
+      getMaxGamepads: () => Promise<number>
       write_to_log: (callback: (event: Event, message: string) => void) => void
       start_wss: (port: number) => Promise<void>
       stop_wss: () => Promise<void>

@@ -11,6 +11,7 @@ import { system } from './ffi';
 
 import { initializeGamepadSystem, createGamepad } from './gamepadFactory'
 
+const MAX_GAMEPADS = 4;
 
 type Payload ={
   content: number | string;
@@ -76,6 +77,10 @@ app.whenReady().then(() => {
     // mainWindow?.setFocusable(false);
     mainWindow?.setAlwaysOnTop(true, 'screen-saver', 1);
     return result;
+  });
+
+  ipcMain.handle('get:max-gamepads', () => {
+    return MAX_GAMEPADS;
   });
 
   ipcMain.handle('dll:create_xbox_controller', async() => {

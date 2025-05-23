@@ -10,6 +10,7 @@ const api = {
   create_ds4_controller: () => ipcRenderer.invoke('dll:create_ds4_controller'),
   awake_wss: () => ipcRenderer.invoke('wss:awake'),
   get_server_ip: () => ipcRenderer.invoke('wss:get_server_ip'),
+  getMaxGamepads: () => ipcRenderer.invoke('get:max-gamepads'),
   
   start_wss: (port: number) => ipcRenderer.send('wss:start', port),
   stop_wss: () => ipcRenderer.send('wss:stop'),
