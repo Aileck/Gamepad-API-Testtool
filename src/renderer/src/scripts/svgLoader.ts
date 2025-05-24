@@ -50,6 +50,8 @@ import XboxRightStickUpPress from "@assets/sprites/Xbox Series/Vector/xbox_stick
 import XboxRightStickLeftPress from "@assets/sprites/Xbox Series/Vector/xbox_stick_r_left.svg"
 import XboxRightStickRightPress from "@assets/sprites/Xbox Series/Vector/xbox_stick_r_right.svg"
 
+import XboxGamepad from "@assets/sprites/Xbox Series/Vector/controller_xbox360.svg"
+
 import Empty from "@assets/sprites/empty.svg"
 import EmptyStick from "@assets/sprites/Generic/Vector/generic_button_circle_outline.svg"
 import EmptyDPad from "@assets/sprites/Xbox Series/Vector/xbox_dpad_none.svg"
@@ -65,6 +67,7 @@ const dualshock4 = {
 }
 
 const xbox = {
+    "gamepad": XboxGamepad,
     "a_press": XboxAPress,
     "a_release": XboxARelease,
     "b_press": XboxBPress,

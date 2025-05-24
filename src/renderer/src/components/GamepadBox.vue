@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { watch, ref } from 'vue';
 import XboxButtonGroup from './XboxButtonGroup.vue';
+import { GamepadType } from '@shared/enums';
 
-import { ref } from 'vue';
 import { ElCard, ElScrollbar } from 'element-plus';
-
+import { xbox } from "@renderer/scripts/svgLoader"
 
 // Define props
 const props = defineProps({
@@ -22,15 +23,20 @@ const props = defineProps({
 });
 
 // Component-specific logic
-const isConnected = props.clientId > -1;
+const isConnected = ref(false);
+
+watch (
+  () => props.clientId,
+  (newVal, _) => {
+    isConnected.value = newVal > -1;
+  },
+)
+
 </script>
 
 <template>
   <el-card 
     class="gamepadbox"
-    :class="[
-      { 'connected': isConnected },
-    ]"
     :shadow="isConnected ? 'always' : 'hover'"
   >
     <!-- Connected state - simple display -->
@@ -58,13 +64,13 @@ const isConnected = props.clientId > -1;
           <!-- Left section (Console Icon) -->
           <div class="section square-section left-section">
             <div class="section-content icon-container">
-              <XboxIcon class="icon-content xbox" />
+              <component class="xbox" :is="xbox.gamepad" />
             </div>
           </div>
           
           <!-- Middle section (display cabinet with three parts) -->
           <el-scrollbar class="section middle-section">
-            <XboxButtonGroup />
+            <XboxButtonGroup :client-id="clientId" />
           </el-scrollbar>
           
           <!-- Right section (square) -->
@@ -81,14 +87,19 @@ const isConnected = props.clientId > -1;
 </template>
 
 <style scoped>
+@import '../assets/button-cabinet.css';
+
 .gamepadbox {
   height: 100%;
   width: 100%;
+  min-height: 200px; 
+  min-width: 300px; 
   transition: all 0.3s;
 }
 
 .gamepadbox :deep(.el-card__body) {
   height: 100%;
+  min-height: 200px;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -108,6 +119,7 @@ const isConnected = props.clientId > -1;
   justify-content: center;
   align-items: center;
   height: 100%;
+  flex: 1;
 }
 
 /* Section styling */
@@ -262,9 +274,8 @@ const isConnected = props.clientId > -1;
   background: #909399;
 }
 
-/* States styling */
-.connected {
-  border-color: #67c23a;
+.xbox {
+  fill: #107c10;
 }
 
 </style>

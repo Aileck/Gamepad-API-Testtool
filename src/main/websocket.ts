@@ -279,7 +279,12 @@ async function handleWebSocketMessage(ws: WebSocket, message: any, clientIp: str
         };
 
         clientMap.set(clientId, newClientData(clientIp, ws));
+        
+        ws.send(encode(response));
 
+        // Send a delay test message to the client 
+        sendMessageToClient(clientId, "delay_test_request");
+        
         mainWindow?.webContents.send('write-log', `Client: ${clientIp} assigned id ${clientId} as ${payload.gamepadType as GamepadType}`);
         
         // Send gamepad:registered event to renderer
@@ -287,27 +292,18 @@ async function handleWebSocketMessage(ws: WebSocket, message: any, clientIp: str
             clientId: clientId,
             gamepadType: payload.gamepadType
         });
-        
-        ws.send(encode(response));
-
-        // Send a delay test message to the client 
-        sendMessageToClient(clientId, "delay_test_request");
     }
 
     async function handleInput(ws: WebSocket, payload: WebSocketGamepadPayload): Promise<void> {
-        const { id, gamepadType, gamepadData, timestamp } = payload;
+        const { id, gamepadType, gamepadData } = payload;
 
         let delayCounter: (() => void) | null = null;
         const client = clientMap.get(id as number);
         if (client && client.isTestingDelay) {
             const startTime = Date.now();
             delayCounter = () => {
-                console.log(`Dispatch petition with Timestamp: ${timestamp}`);
                 const diff = Date.now() - startTime + client.rtt;
-                console.log(`Server time: ${Date.now()}`);
-                console.log(`Client timestamp: ${timestamp}`);  
 
-                console.log(`Delay: ${diff}ms`);
             };
         }
 
@@ -327,8 +323,14 @@ async function handleWebSocketMessage(ws: WebSocket, message: any, clientIp: str
 
         if (gamepadType === GamepadType.Xbox) {
             xboxInput(id as number, gamepadData as GamepadData, delayCounter);
+            if (!mainWindow?.isMinimized()) {
+                mainWindow?.webContents.send('gamepad:input-xbox', { id, gamepadData });
+            }
         } else if (gamepadType === GamepadType.DualShock) {
             dualShockInput(id as number, gamepadData as GamepadData, delayCounter);
+            if (!mainWindow?.isMinimized()) {
+                mainWindow?.webContents.send('gamepad:input-dualshock', { id, gamepadData });
+            }
         }
     }
 

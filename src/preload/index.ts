@@ -20,6 +20,14 @@ const api = {
     
   onGamepadRegistered: (callback: (event: Electron.IpcRendererEvent, data: { clientId: number, gamepadType: string }) => void) =>
     ipcRenderer.on('gamepad:registered', callback),
+
+  onXboxInput: (callback: (event: Electron.IpcRendererEvent, data: { id: number, gamepadData: any }) => void) => {
+    ipcRenderer.on('gamepad:input-xbox', callback);
+  },
+
+  onDualShockInput: (callback: (event: Electron.IpcRendererEvent, data: { id: number, gamepadData: any }) => void) => {
+    ipcRenderer.on('gamepad:input-dualshock', callback);
+  },
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import '../../../assets/styles/fonts.css';
 import '../../../node_modules/element-plus/dist/index.css'
+import { GamepadType } from '@shared/enums';
 
 import { ElContainer, ElHeader, ElMain, ElFooter, ElSpace, ElButton, ElText, ElRow, ElCol, ElIcon, ElScrollbar } from 'element-plus'
 import { ElementPlus, DocumentCopy } from '@element-plus/icons-vue'
@@ -11,7 +12,6 @@ import GamepadBox from './components/GamepadBox.vue'; // Import the GamepadBox c
 const sessionIP = ref("Loading IP");
 const sessionPort = ref("Loading Port");
 
-const players = ref<number[]>([]); // Array to hold player indices
 const maxGamepads = ref(0);
 
 interface GamepadSlot {
@@ -20,7 +20,7 @@ interface GamepadSlot {
 }
 
 // Initialize empty player slots
-const playerSlots = ref<(GamepadSlot | null)[]>([]);
+const gamepadSlots = ref<(GamepadSlot | null)[]>([]);
 async function awakeCommunication() {
   await window.api.awake_wss();
 }
@@ -34,21 +34,22 @@ async function startCommunication() {
 }
 
 onMounted(async () => {
-  // Start WSS and set info text to user
   awakeCommunication();
   startCommunication();
 
   maxGamepads.value = await window.api.getMaxGamepads();
-  playerSlots.value = Array(maxGamepads.value).fill(null);
+  gamepadSlots.value = Array(maxGamepads.value).fill(null);
 
-  // Listen for gamepad registration events
-  window.api.onGamepadRegistered((_, data) => {    // Update the first available null slot with the new gamepad ID
-    const emptySlotIndex = playerSlots.value.findIndex(slot => slot === null);
+  window.api.onGamepadRegistered((_, data) => {
+    const emptySlotIndex = gamepadSlots.value.findIndex(slot => slot === null);
+    
     if (emptySlotIndex !== -1) {
-      playerSlots.value[emptySlotIndex] = {clientId: data.clientId, gamepadType: data.gamepadType};
+      const newSlots = [...gamepadSlots.value];
+      newSlots[emptySlotIndex] = { ...data };
+      gamepadSlots.value = newSlots;
     }
   });
-})
+});
 </script>
 
 <template>
@@ -95,7 +96,7 @@ onMounted(async () => {
             <el-row :gutter="20" class="gamepadbox-grid">
               <!-- Loop through player slots and create responsive columns -->              
                <el-col 
-                v-for="(playerNum, index) in playerSlots" 
+                v-for="(gamepadInfo, index) in gamepadSlots" 
                 :key="index"                
                 :xs="24"
                 :sm="24"
@@ -105,8 +106,8 @@ onMounted(async () => {
                 <div class="gamepadbox-wrapper">
                   <GamepadBox 
                     :box-number="index + 1"
-                    :gamepad-type="playerNum?.gamepadType || 'Unknown'" 
-                    :client-id="playerNum?.clientId || -1"
+                    :gamepad-type="gamepadInfo?.gamepadType || ''" 
+                    :client-id="gamepadInfo?.clientId || -1"
                   />
                 </div>
               </el-col>
@@ -224,5 +225,6 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+
 }
 </style>

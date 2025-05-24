@@ -1,40 +1,48 @@
 <script setup lang="ts">
 import { xbox, commun } from "@renderer/scripts/svgLoader"
 import { GamepadData } from "@shared/types"
+import { onMounted, ref } from "vue";
 
 const props = defineProps({
-  // Add props to control button count or type if needed
+  clientId: {
+    type: Number,
+    required: true
+  }
 })
 
-const gamepadData: GamepadData = ({
-    buttonEast: Math.random() > 0.5,
-    buttonWest: Math.random() > 0.7,
-    buttonNorth: Math.random() > 0.6,
-    buttonSouth: Math.random() > 0.4,
-
-    up: Math.random() > 0.8,
-    down: Math.random() > 0.7,
-    left: Math.random() > 0.6,
-    right: Math.random() > 0.5,
-
-    leftShoulder: Math.random() > 0.7,
-    rightShoulder: Math.random() > 0.6,
-
-    leftTrigger: Math.random() > 0.5,
-    rightTrigger: Math.random() > 0.4,
-
-    leftStickButton: Math.random() > 0.8,
-    rightStickButton: Math.random() > 0.7,
-
-    leftStickX: Math.random() * 2 - 1,
-    leftStickY: Math.random() * 2 - 1,
-    
-    rightStickX: Math.random() * 2 - 1,
-    rightStickY: Math.random() * 2 - 1,
-
-    buttonStart: Math.random() > 0.9,
-    buttonSelect: Math.random() > 0.85
+const gamepadData = ref<GamepadData>({
+  buttonEast: false,
+  buttonWest: false,
+  buttonNorth: false,
+  buttonSouth: false,
+  up: false,
+  down: false,
+  left: false,
+  right: false,
+  leftShoulder: false,
+  rightShoulder: false,
+  leftTrigger: false,
+  rightTrigger: false,
+  leftStickButton: false,
+  rightStickButton: false,
+  leftStickX: 0,
+  leftStickY: 0,
+  rightStickX: 0,
+  rightStickY: 0,
+  buttonStart: false,
+  buttonSelect: false
 })
+
+onMounted(() => {
+  window.api.onXboxInput((_, data) => {
+    console.log("Gamepad input: " + data.id);
+
+    if (data.id === props.clientId) {
+      gamepadData.value = data.gamepadData;
+    }
+  })
+})
+
 
 </script>
 
