@@ -303,7 +303,9 @@ async function handleWebSocketMessage(ws: WebSocket, message: any, clientIp: str
             const startTime = Date.now();
             delayCounter = () => {
                 const diff = Date.now() - startTime + client.rtt;
-
+                if (!mainWindow?.isMinimized()) {
+                    mainWindow?.webContents.send('gamepad:get-delay', { id, delay: diff });
+                }
             };
         }
 

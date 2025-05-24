@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { watch, ref } from 'vue';
+import { watch, ref, onMounted } from 'vue';
 import XboxButtonGroup from './XboxButtonGroup.vue';
+import DualShockButtonGroup from './DualShockButtonGroup.vue';
+
 import { GamepadType } from '@shared/enums';
 
 import { ElCard, ElScrollbar } from 'element-plus';
-import { xbox } from "@renderer/scripts/svgLoader"
+import { xbox, dualshock4 } from "@renderer/scripts/svgLoader"
 
 // Define props
 const props = defineProps({
@@ -24,6 +26,7 @@ const props = defineProps({
 
 // Component-specific logic
 const isConnected = ref(false);
+const delay = ref(0);
 
 watch (
   () => props.clientId,
@@ -31,7 +34,13 @@ watch (
     isConnected.value = newVal > -1;
   },
 )
-
+onMounted(() => {
+  window.api.onGetDelay((_, data) => {
+    if (data.id === props.clientId) {
+      delay.value = data.delay;
+    }
+  })
+})
 </script>
 
 <template>
@@ -64,20 +73,22 @@ watch (
           <!-- Left section (Console Icon) -->
           <div class="section square-section left-section">
             <div class="section-content icon-container">
-              <component class="xbox" :is="xbox.gamepad" />
+              <component v-if="gamepadType === GamepadType.Xbox" class="xbox" :is="xbox.gamepad" />
+              <component v-else-if="gamepadType === GamepadType.DualShock" class="dualshock" :is="dualshock4.gamepad" />
             </div>
           </div>
           
           <!-- Middle section (display cabinet with three parts) -->
           <el-scrollbar class="section middle-section">
-            <XboxButtonGroup :client-id="clientId" />
+            <XboxButtonGroup v-if="gamepadType === GamepadType.Xbox" :client-id="clientId" />
+            <DualShockButtonGroup v-else-if="gamepadType === GamepadType.DualShock" :client-id="clientId" />
           </el-scrollbar>
           
           <!-- Right section (square) -->
           <div class="section square-section right-section">
             <div class="section-content">
               Delay <br>
-              ~50ms
+              ~{{ delay }}ms
             </div>
           </div>
         </div>
@@ -276,6 +287,10 @@ watch (
 
 .xbox {
   fill: #107c10;
+}
+
+.dualshock {
+  fill: #003087;
 }
 
 </style>

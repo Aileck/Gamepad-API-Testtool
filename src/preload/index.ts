@@ -28,6 +28,10 @@ const api = {
   onDualShockInput: (callback: (event: Electron.IpcRendererEvent, data: { id: number, gamepadData: any }) => void) => {
     ipcRenderer.on('gamepad:input-dualshock', callback);
   },
+
+  onGetDelay: (callback: (event: Electron.IpcRendererEvent, data: { id: number, delay: number }) => void) => {
+    ipcRenderer.on('gamepad:get-delay', callback);
+  },
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

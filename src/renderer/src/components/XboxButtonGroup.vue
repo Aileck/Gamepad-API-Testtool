@@ -67,12 +67,13 @@ onMounted(() => {
     <!-- Middle cabinet section -->
     <div class="cabinet-section">
       <div class="cabinet-content">
-        <component class="gamepad-button-small xbox" :is="gamepadData.leftStickY > 0 ? xbox.stick_l_up_press : commun.empty_stick" />
         <component class="gamepad-button-small xbox" :is="gamepadData.leftStickX < 0 ? xbox.stick_l_left_press : commun.empty_stick" />
+        <component class="gamepad-button-small xbox" :is="gamepadData.leftStickY > 0 ? xbox.stick_l_up_press : commun.empty_stick" />
         <component class="gamepad-button-small xbox" :is="gamepadData.leftStickButton ? xbox.ls_press : xbox.ls_release" />
-        <component class="gamepad-button-small xbox" :is="gamepadData.leftStickX > 0 ? xbox.stick_l_right_press : commun.empty_stick" />
         <component class="gamepad-button-small xbox" :is="gamepadData.leftStickY < 0 ? xbox.stick_l_down_press : commun.empty_stick" />
-        <component class="gamepad-button-small xbox" :is="commun.empty" />
+        <component class="gamepad-button-small xbox" :is="gamepadData.leftStickX > 0 ? xbox.stick_l_right_press : commun.empty_stick" />
+          <component class="gamepad-button-small dualshock" :is="commun.empty" />
+
         <component class="gamepad-button-small xbox" :is="gamepadData.buttonWest ? xbox.x_press : xbox.x_release" />
         <component class="gamepad-button-small xbox" :is="gamepadData.buttonNorth ? xbox.y_press : xbox.y_release" />
         <component class="gamepad-button-small xbox" :is="gamepadData.buttonSouth ? xbox.a_press : xbox.a_release" />
@@ -83,16 +84,16 @@ onMounted(() => {
     <!-- Bottom cabinet section -->
     <div class="cabinet-section">
       <div class="cabinet-content">                  
-        <component class="gamepad-button-small xbox" :is="gamepadData.up ? xbox.dpad_up_press : commun.empty_dpad" />
-        <component class="gamepad-button-small xbox" :is="gamepadData.down ? xbox.dpad_down_press : commun.empty_dpad" />
-        <component class="gamepad-button-small xbox" :is="gamepadData.left ? xbox.dpad_left_press : commun.empty_dpad" />
-        <component class="gamepad-button-small xbox" :is="gamepadData.right ? xbox.dpad_right_press : commun.empty_dpad" />
+        <component class="gamepad-button-small xbox" :is="gamepadData.left ? xbox.dpad_left_press : xbox.empty_dpad" />
+        <component class="gamepad-button-small xbox" :is="gamepadData.up ? xbox.dpad_up_press : xbox.empty_dpad" />
+        <component class="gamepad-button-small xbox" :is="gamepadData.down ? xbox.dpad_down_press : xbox.empty_dpad" />
+        <component class="gamepad-button-small xbox" :is="gamepadData.right ? xbox.dpad_right_press : xbox.empty_dpad" />
         <component class="gamepad-button-small xbox" :is="commun.empty" />
-        <component class="gamepad-button-small xbox" :is="gamepadData.rightStickY > 0 ? xbox.stick_r_up_press : commun.empty_stick" />
         <component class="gamepad-button-small xbox" :is="gamepadData.rightStickX < 0 ? xbox.stick_r_left_press : commun.empty_stick" />
+        <component class="gamepad-button-small xbox" :is="gamepadData.rightStickY > 0 ? xbox.stick_r_up_press : commun.empty_stick" />
         <component class="gamepad-button-small xbox" :is="gamepadData.rightStickButton ? xbox.rs_press : xbox.rs_release" />
-        <component class="gamepad-button-small xbox" :is="gamepadData.rightStickX > 0 ? xbox.stick_r_right_press : commun.empty_stick" />
         <component class="gamepad-button-small xbox" :is="gamepadData.rightStickY < 0 ? xbox.stick_r_down_press : commun.empty_stick" />
+        <component class="gamepad-button-small xbox" :is="gamepadData.rightStickX < 0 ? xbox.stick_r_left_press : commun.empty_stick" />
       </div>
     </div>
   </div>
