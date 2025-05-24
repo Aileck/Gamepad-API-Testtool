@@ -10,10 +10,17 @@ import GamepadBox from './components/GamepadBox.vue'; // Import the GamepadBox c
 
 const sessionIP = ref("Loading IP");
 const sessionPort = ref("Loading Port");
+
 const players = ref<number[]>([]); // Array to hold player indices
 const maxGamepads = ref(0);
+
+interface GamepadSlot {
+  clientId: number;
+  gamepadType: string;
+}
+
 // Initialize empty player slots
-const playerSlots = ref<(number | null)[]>([]);
+const playerSlots = ref<(GamepadSlot | null)[]>([]);
 async function awakeCommunication() {
   await window.api.awake_wss();
 }
@@ -33,6 +40,14 @@ onMounted(async () => {
 
   maxGamepads.value = await window.api.getMaxGamepads();
   playerSlots.value = Array(maxGamepads.value).fill(null);
+
+  // Listen for gamepad registration events
+  window.api.onGamepadRegistered((_, data) => {    // Update the first available null slot with the new gamepad ID
+    const emptySlotIndex = playerSlots.value.findIndex(slot => slot === null);
+    if (emptySlotIndex !== -1) {
+      playerSlots.value[emptySlotIndex] = {clientId: data.clientId, gamepadType: data.gamepadType};
+    }
+  });
 })
 </script>
 
@@ -88,7 +103,11 @@ onMounted(async () => {
                 class="gamepadbox-col"
               >
                 <div class="gamepadbox-wrapper">
-                  <GamepadBox :player-number="index + 1" :system-id="1" />
+                  <GamepadBox 
+                    :box-number="index + 1"
+                    :gamepad-type="playerNum?.gamepadType || 'Unknown'" 
+                    :client-id="playerNum?.clientId || -1"
+                  />
                 </div>
               </el-col>
             </el-row>
@@ -193,7 +212,7 @@ body {
 }
 
 .gamepadbox-wrapper {
-  height: 180px; /* Height for each GamepadBox */
+  height: 200px; 
 }
 
 /* Custom styling for the Element Plus scrollbar */
@@ -201,5 +220,9 @@ body {
   --el-scrollbar-opacity: 0.3;
   --el-scrollbar-hover-opacity: 0.5;
   --el-scrollbar-width: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 </style>

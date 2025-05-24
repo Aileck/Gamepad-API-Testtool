@@ -17,6 +17,9 @@ const api = {
 
   write_to_log: (callback: (event: Electron.IpcRendererEvent, message: string) => void) => 
     ipcRenderer.on('write-log', callback),
+    
+  onGamepadRegistered: (callback: (event: Electron.IpcRendererEvent, data: { clientId: number, gamepadType: string }) => void) =>
+    ipcRenderer.on('gamepad:registered', callback),
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

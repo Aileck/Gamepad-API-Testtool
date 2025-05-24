@@ -26,6 +26,7 @@ declare global {
       write_to_log: (callback: (event: Event, message: string) => void) => void
       start_wss: (port: number) => Promise<void>
       stop_wss: () => Promise<void>
+      onGamepadRegistered: (callback: (event: Event, data: { clientId: number, gamepadType: string }) => void) => void
     }  
   }
 }

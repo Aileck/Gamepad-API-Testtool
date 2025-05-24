@@ -7,30 +7,22 @@ import { ElCard, ElScrollbar } from 'element-plus';
 
 // Define props
 const props = defineProps({
-  playerNumber: {
+  boxNumber: {
     type: Number,
     required: true
   },
-  systemId: {
+  clientId: {
     type: Number,
+    required: true
+  },
+  gamepadType: {
+    type: String,
     required: true
   }
 });
 
 // Component-specific logic
-const isConnected = false;
-const isReady = ref(false);
-
-// Methods to handle player box states
-function setConnected() {
-  isConnected.value = true;
-}
-
-function setReady() {
-  if (isConnected.value) {
-    isReady.value = true;
-  }
-}
+const isConnected = props.clientId > -1;
 </script>
 
 <template>
@@ -38,13 +30,12 @@ function setReady() {
     class="gamepadbox"
     :class="[
       { 'connected': isConnected },
-      { 'ready': isReady }
     ]"
     :shadow="isConnected ? 'always' : 'hover'"
   >
     <!-- Connected state - simple display -->
-    <template v-if="isConnected">
-      <div class="player-number">{{ playerNumber }}</div>
+    <template v-if="!isConnected">
+      <div class="player-number">{{ boxNumber }}</div>
     </template>
     
     <!-- Disconnected state - new layout according to the image -->
@@ -54,7 +45,7 @@ function setReady() {
         <div class="top-container">
           <!-- ID section (square) -->
           <div class="section square-section id-section">
-            <div class="section-content">{{ playerNumber }}</div>
+            <div class="section-content">{{ boxNumber }}</div>
           </div>
           <!-- Device Name section -->
           <div class="section rg-cube-section">
@@ -276,16 +267,4 @@ function setReady() {
   border-color: #67c23a;
 }
 
-.ready {
-  background-color: #f0f9eb;
-}
-
-.xboxButton {
-  height: 1.2em;
-  width: 1.2em;
-}
-
-.xbox * {
-  fill: #2c5915;
-}
 </style>

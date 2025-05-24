@@ -281,11 +281,16 @@ async function handleWebSocketMessage(ws: WebSocket, message: any, clientIp: str
         clientMap.set(clientId, newClientData(clientIp, ws));
 
         mainWindow?.webContents.send('write-log', `Client: ${clientIp} assigned id ${clientId} as ${payload.gamepadType as GamepadType}`);
+        
+        // Send gamepad:registered event to renderer
+        mainWindow?.webContents.send('gamepad:registered', {
+            clientId: clientId,
+            gamepadType: payload.gamepadType
+        });
+        
         ws.send(encode(response));
 
         // Send a delay test message to the client 
-        // TODO: remove this
-        console.log('Sending delay test message to client:', clientId);
         sendMessageToClient(clientId, "delay_test_request");
     }
 
