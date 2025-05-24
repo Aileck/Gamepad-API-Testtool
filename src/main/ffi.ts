@@ -20,7 +20,8 @@ koffi.struct('Gamepad_Result', {
 // System Functions
 const system = {
   initialize: gamepadLib.func('Gamepad_Result initialize()'),
-  release: gamepadLib.func('Gamepad_Result release()'),
+  release_gamepad: gamepadLib.func('Gamepad_Result release_gamepad(int id)'),
+  release_all: gamepadLib.func('Gamepad_Result release_all()'),
 }
 
 // Xbox Controller Functions

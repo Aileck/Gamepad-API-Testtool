@@ -32,6 +32,10 @@ const api = {
   onGetDelay: (callback: (event: Electron.IpcRendererEvent, data: { id: number, delay: number }) => void) => {
     ipcRenderer.on('gamepad:get-delay', callback);
   },
+
+  onGamepadDisconnected: (callback: (event: Electron.IpcRendererEvent, data: { id: number }) => void) => {
+    ipcRenderer.on('gamepad:disconnected', callback);
+  },
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

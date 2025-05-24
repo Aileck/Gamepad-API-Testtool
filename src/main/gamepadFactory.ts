@@ -26,10 +26,10 @@ async function createGamepad(type: GamepadType): Promise<number> {
 }
 
 // // Release xbox gamepad with the given ID
-// async function releaseXboxGamepad(gamepadID: number): Promise<any> {
-//     const result = await xbox.release(gamepadID);
-//     return result;
-// }
+async function releaseGamepad(gamepadID: number): Promise<any> {
+    const result = await system.release_gamepad(gamepadID);
+    return result;
+}
 
 async function xboxInput(gamepadID: number, gamepadData: GamepadData, delayCounter?: any): Promise<any> {
   const normalizedLeftStick = normalizedXboxStick(gamepadData.leftStickX, gamepadData.leftStickY);
@@ -177,6 +177,7 @@ function normalizeTrigger(value: number): number {
 export {
     initializeGamepadSystem,
     createGamepad,
+    releaseGamepad,
     xboxInput,
     dualShockInput,
 }

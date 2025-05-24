@@ -49,6 +49,13 @@ onMounted(async () => {
       gamepadSlots.value = newSlots;
     }
   });
+
+  window.api.onGamepadDisconnected((_, data) => {
+    const index = gamepadSlots.value.findIndex(slot => slot?.clientId === data.id);
+    if (index !== -1) {
+      gamepadSlots.value[index] = null;
+    }
+  });
 });
 </script>
 

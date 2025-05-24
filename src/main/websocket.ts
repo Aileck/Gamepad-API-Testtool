@@ -3,7 +3,7 @@ import { WebSocketServer, WebSocket  } from "ws";
 import { encode, decode } from '@msgpack/msgpack';
 import { BrowserWindow, ipcMain } from "electron";
 import { networkInterfaces } from 'os';
-import { initializeGamepadSystem, createGamepad, xboxInput, dualShockInput } from './gamepadFactory'
+import { initializeGamepadSystem, createGamepad, xboxInput, dualShockInput, releaseGamepad } from './gamepadFactory'
 import { GamepadData } from '../shared/types';
 import { GamepadType } from '../shared/enums';
 
@@ -239,6 +239,10 @@ async function handleWebSocketMessage(ws: WebSocket, message: any, clientIp: str
                 await handleInput(ws, decoded as WebSocketGamepadPayload);
                 break;
 
+            case 'disconnect':
+                await handleDisconnect(ws, decoded as WebSocketGamepadPayload);
+                break;
+
             case 'delay_test_request_ack':
                 await handleDelayTestRequestAck(decoded as WebSocketPingPayload);
                 break;
@@ -267,6 +271,15 @@ async function handleWebSocketMessage(ws: WebSocket, message: any, clientIp: str
         };
         mainWindow?.webContents.send('write-log', `Client connected: ${clientIp}`);
         ws.send(encode(response));
+    }
+
+    async function handleDisconnect(ws: WebSocket, payload: WebSocketGamepadPayload): Promise<void> {
+        const { id } = payload;
+        clientMap.delete(id as number);
+
+        releaseGamepad(id as number);
+
+        mainWindow?.webContents.send('gamepad:disconnected', { id });
     }
 
     async function handleRegister(ws: WebSocket, clientIp: string, payload: WebSocketGamepadPayload): Promise<void> {

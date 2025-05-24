@@ -105,7 +105,7 @@ app.whenReady().then(() => {
   });
 
   ipcMain.handle('dll:release', async() => {
-    const result = await system.release();
+    const result = await system.release_all();
 
     mainWindow?.setFocusable(true);
     mainWindow?.setAlwaysOnTop(false, 'screen-saver', 1);
