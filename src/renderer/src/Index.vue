@@ -7,10 +7,13 @@ import { ElContainer, ElHeader, ElMain, ElFooter, ElSpace, ElButton, ElText, ElR
 import { ElementPlus, DocumentCopy } from '@element-plus/icons-vue'
 
 import { ref, onMounted, computed } from 'vue'
+import QRCode from 'qrcode'
+
 import GamepadBox from './components/GamepadBox.vue'; // Import the GamepadBox component
 
 const sessionIP = ref("Loading IP");
 const sessionPort = ref("Loading Port");
+const qrCanvas = ref(null)
 
 const maxGamepads = ref(0);
 
@@ -39,6 +42,11 @@ onMounted(async () => {
 
   maxGamepads.value = await window.api.getMaxGamepads();
   gamepadSlots.value = Array(maxGamepads.value).fill(null);
+
+  QRCode.toCanvas(qrCanvas.value, 'QR Code test', {
+    width: 200,
+    margin: 2,
+  })
 
   window.api.onGamepadRegistered((_, data) => {
     const emptySlotIndex = gamepadSlots.value.findIndex(slot => slot === null);
