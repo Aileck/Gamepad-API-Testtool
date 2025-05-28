@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import '../../../assets/styles/fonts.css';
 import '../../../node_modules/element-plus/dist/index.css'
-import { GamepadType } from '@shared/enums';
 
-import { ElContainer, ElHeader, ElMain, ElFooter, ElSpace, ElButton, ElText, ElRow, ElCol, ElIcon, ElScrollbar } from 'element-plus'
-import { ElementPlus, DocumentCopy } from '@element-plus/icons-vue'
+import { ElContainer, ElHeader, ElMain, ElAside, ElSpace, ElButton, ElRow, ElCol, ElIcon, ElScrollbar, ElText } from 'element-plus'
+import { ElementPlus, InfoFilled } from '@element-plus/icons-vue'
 
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import QRCode from 'qrcode'
 
 import GamepadBox from './components/GamepadBox.vue'; // Import the GamepadBox component
@@ -24,6 +23,7 @@ interface GamepadSlot {
 
 // Initialize empty player slots
 const gamepadSlots = ref<(GamepadSlot | null)[]>([]);
+
 async function awakeCommunication() {
   await window.api.awake_wss();
 }
@@ -37,17 +37,28 @@ async function startCommunication() {
 }
 
 onMounted(async () => {
-  awakeCommunication();
-  startCommunication();
+  await awakeCommunication();
+  await startCommunication();
 
   maxGamepads.value = await window.api.getMaxGamepads();
   gamepadSlots.value = Array(maxGamepads.value).fill(null);
 
-  QRCode.toCanvas(qrCanvas.value, 'QR Code test', {
-    width: 200,
+  // Generate QR code with connection info
+  QRCode.toCanvas(qrCanvas.value, 
+    `{
+      "ip": "${sessionIP.value}",
+      "port": "${sessionPort.value}"
+    }`, {
+    width: 120,
     margin: 2,
-  })
+    color: {
+      dark: '#000000',
+      light: '#ffffff'
+    }
+    }
+  )
 
+  // Handle gamepad registration events
   window.api.onGamepadRegistered((_, data) => {
     const emptySlotIndex = gamepadSlots.value.findIndex(slot => slot === null);
     
@@ -58,6 +69,7 @@ onMounted(async () => {
     }
   });
 
+  // Handle gamepad disconnection events
   window.api.onGamepadDisconnected((_, data) => {
     const index = gamepadSlots.value.findIndex(slot => slot?.clientId === data.id);
     if (index !== -1) {
@@ -68,75 +80,78 @@ onMounted(async () => {
 </script>
 
 <template>
-  <el-container class="full-page flex gap-4 mb-4">
-    <el-header class="dark-gray-bg header-container">
-      <el-row class="connection-info-bar">
-        <el-col justify="center" align="middle">
-          <el-space :size="10" spacer="">
-            <el-icon>
-              <ElementPlus />
-            </el-icon>
-            Connection Status: Succeeded
-          </el-space>
-        </el-col>
-
-        <el-col justify="center" align="middle">
-          <el-space :size="10" spacer="">
-            IP: <el-button size="" type="warning" :icon="DocumentCopy">{{ sessionIP }}</el-button>
-          </el-space>
-        </el-col>
-
-        <el-col justify="center" align="middle">
-          <el-space :size="10" spacer="">
-            Port: <el-button size="" type="warning" :icon="DocumentCopy">{{ sessionPort }}</el-button>
-          </el-space>
-        </el-col>
-      </el-row>
-    </el-header>
-
-    <el-main class="white-bg main-content">
-      <div class="controller-interface">
-
-        <!-- Controller instructions -->
-        <div class="controller-instructions">
-          Press 
-          <span class="button-l">L</span> + 
-          <span class="button-r">R</span> 
-          on the controller.
+  <el-container class="full-page">
+    <!-- Sidebar with QR code and connection info -->
+    <el-aside class="dark-gray-bg aside-container" width="300px">
+      <div class="sidebar-content">
+        <!-- QR Code section -->
+        <div class="qr-code-section">
+          <canvas ref="qrCanvas"></canvas>
         </div>
-
-        <!-- GamepadBox container - responsive layout -->
-        <div class="gamepadbox-container">
-          <el-scrollbar height="60vh" class="gamepadbox-scrollbar">
-            <el-row :gutter="20" class="gamepadbox-grid">
-              <!-- Loop through player slots and create responsive columns -->              
-               <el-col 
-                v-for="(gamepadInfo, index) in gamepadSlots" 
-                :key="index"                
-                :xs="24"
-                :sm="24"
-                :md="12"
-                class="gamepadbox-col"
-              >
-                <div class="gamepadbox-wrapper">
-                  <GamepadBox 
-                    :box-number="index + 1"
-                    :gamepad-type="gamepadInfo?.gamepadType || ''" 
-                    :client-id="gamepadInfo?.clientId || -1"
-                  />
-                </div>
-              </el-col>
-            </el-row>
-          </el-scrollbar>
+        
+        <!-- Connection information -->
+        <div class="connection-info">
+          <el-space direction="vertical" :size="20">
+            <div class="connection-status">
+              <el-icon><ElementPlus /></el-icon>
+              <span>Connection Status: Succeeded</span>
+            </div>
+            <div class="ip-info">
+              <span>IP:</span>
+              <el-button size="default" type="warning">{{ sessionIP }}</el-button>
+            </div>
+            <div class="port-info">
+              <span>Port:</span>
+              <el-button size="default" type="warning">{{ sessionPort }}</el-button>
+            </div>
+          </el-space>
         </div>
       </div>
-    </el-main>
+    </el-aside>
 
-    <el-footer class="dark-gray-bg footer-container">
-      <div class="footer-content">
-        <el-button>{{ sessionIP }}</el-button>
-      </div>
-    </el-footer>
+    <el-container>
+      <!-- Compact header -->
+      <el-header class="dark-gray-bg header-container">
+        <div>
+          <h2>Phone2Pad Desktop - Beta</h2>
+        </div>
+      </el-header>
+
+      <!-- Main content area -->
+      <el-main class="white-bg main-content">
+        <div class="controller-interface">
+          <!-- Controller instructions -->
+          <div class="controller-instructions"> 
+            <el-text style="font-size: 1.2rem;" type="warning" size="large"><el-icon><InfoFilled /></el-icon> Use the Phone2Pad phone app to scan the QR code or enter the IP and port manually.</el-text>
+          </div>
+
+          <!-- GamepadBox container - responsive layout -->
+          <div class="gamepadbox-container">
+            <el-scrollbar height="calc(75vh - 60px)" class="gamepadbox-scrollbar">
+              <el-row :gutter="20" class="gamepadbox-grid">
+                <!-- Loop through player slots and create responsive columns -->              
+                <el-col 
+                  v-for="(gamepadInfo, index) in gamepadSlots" 
+                  :key="index"                
+                  :xs="24"
+                  :sm="24"
+                  :md="12"
+                  class="gamepadbox-col"
+                >
+                  <div class="gamepadbox-wrapper">
+                    <GamepadBox 
+                      :box-number="index + 1"
+                      :gamepad-type="gamepadInfo?.gamepadType || ''" 
+                      :client-id="gamepadInfo?.clientId || -1"
+                    />
+                  </div>
+                </el-col>
+              </el-row>
+            </el-scrollbar>
+          </div>
+        </div>
+      </el-main>
+    </el-container>
   </el-container>
 </template>
 
@@ -145,36 +160,69 @@ body {
   font-family: 'sw_like_style';
 }
 
-.connection-info-bar {
-  flex-direction: column;
-  row-gap: 8px;
-}
-
+/* Full page container */
 .full-page {
   height: 100vh;
   width: 100vw;
   display: flex;
-  flex-direction: column;
 }
 
-.header-container {
+/* Sidebar styles */
+.aside-container {
+  background-color: #6c757d;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  height: 100%;
+}
+
+.qr-code-section {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #6c757d;
-  height: 15vh;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
 }
 
-.footer-container {
-  background-color: #6c757d;
-  flex-shrink: 0;
-  height: 10vh;
+.connection-info {
+  width: 100%;
+}
+
+.connection-status, .ip-info, .port-info {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 10px;
+  color: white;
+}
+
+/* Compact header styles */
+.header-container {
+  background-color: #6c757d;
+  height: 15vh;
+  display: flex;
+  align-items: center;
   padding: 0 20px;
 }
 
+.header-content {
+  color: white;
+}
+
+.header-content h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+/* Main content styles */
 .main-content {
   background-color: #ffffff;
   color: #6c757d;
@@ -199,18 +247,6 @@ body {
   justify-content: start;
   gap: 8px;
   margin: 5px 0;
-}
-
-.button-l, .button-r {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 36px;
-  height: 36px;
-  background-color: #4361ee;
-  color: white;
-  border-radius: 4px;
-  font-weight: bold;
 }
 
 /* GamepadBox responsive container styles */
@@ -240,6 +276,20 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+}
 
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .aside-container {
+    width: 250px !important;
+  }
+  
+  .sidebar-content {
+    gap: 20px;
+  }
+  
+  .header-content h2 {
+    font-size: 1.2rem;
+  }
 }
 </style>

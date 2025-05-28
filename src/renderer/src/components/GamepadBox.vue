@@ -53,43 +53,47 @@ onMounted(() => {
       <div class="player-number">{{ boxNumber }}</div>
     </template>
     
-    <!-- Disconnected state - new layout according to the image -->
+    <!-- Disconnected state - new layout with all info on left side -->
     <template v-else>
       <div class="layout-container">
-        <!-- Top row with sections -->
-        <div class="top-container">
-          <!-- ID section (square) -->
-          <div class="section square-section id-section">
-            <div class="section-content">{{ boxNumber }}</div>
-          </div>
-          <!-- Device Name section -->
-          <div class="section rg-cube-section">
-            <div class="section-content">RG Cube</div>
-          </div>
-        </div>
-        
-        <!-- Bottom row with sections -->
-        <div class="bottom-container">
-          <!-- Left section (Console Icon) -->
-          <div class="section square-section left-section">
-            <div class="section-content icon-container">
-              <component v-if="gamepadType === GamepadType.Xbox" class="xbox" :is="xbox.gamepad" />
-              <component v-else-if="gamepadType === GamepadType.DualShock" class="dualshock" :is="dualshock4.gamepad" />
+        <!-- Main container with left info panel and right content -->
+        <div class="main-container">
+          <!-- Left panel (ID, Icon, Delay all together) -->
+          <div class="section left-panel">
+            <div class="left-panel-content">
+              <!-- ID section -->
+              <div class="id-section">
+                <div class="id-content">{{ boxNumber }}</div>
+              </div>
+              <!-- Icon section -->
+              <div class="icon-section">
+                <div class="icon-container">
+                  <component v-if="gamepadType === GamepadType.Xbox" class="xbox" :is="xbox.gamepad" />
+                  <component v-else-if="gamepadType === GamepadType.DualShock" class="dualshock" :is="dualshock4.gamepad" />
+                </div>
+              </div>
+              <!-- Delay section -->
+              <div class="delay-section">
+                <div class="delay-content">
+                  <div class="delay-text">Delay</div>
+                  <div class="delay-value">~{{ delay }}ms</div>
+                </div>
+              </div>
             </div>
           </div>
           
-          <!-- Middle section (display cabinet with three parts) -->
-          <el-scrollbar class="section middle-section">
-            <XboxButtonGroup v-if="gamepadType === GamepadType.Xbox" :client-id="clientId" />
-            <DualShockButtonGroup v-else-if="gamepadType === GamepadType.DualShock" :client-id="clientId" />
-          </el-scrollbar>
-          
-          <!-- Right section (square) -->
-          <div class="section square-section right-section">
-            <div class="section-content">
-              Delay <br>
-              ~{{ delay }}ms
+          <!-- Right section with top RG Cube and bottom buttons -->
+          <div class="right-panel">
+            <!-- Top RG Cube section -->
+            <div class="section rg-cube-section">
+              <div class="section-content">RG Cube</div>
             </div>
+            
+            <!-- Bottom buttons section -->
+            <el-scrollbar class="section middle-section">
+              <XboxButtonGroup v-if="gamepadType === GamepadType.Xbox" :client-id="clientId" />
+              <DualShockButtonGroup v-else-if="gamepadType === GamepadType.DualShock" :client-id="clientId" />
+            </el-scrollbar>
           </div>
         </div>
       </div>
@@ -153,64 +157,110 @@ onMounted(() => {
   justify-content: center;
 }
 
-/* Top container styling */
-.top-container {
+/* Main container styling */
+.main-container {
   display: flex;
-  height: 50px; /* Fixed height for top row */
+  height: 100%;
   width: 100%;
 }
 
-.rg-cube-section {
-  flex: 1;
-}
-
-/* Bottom container styling */
-.bottom-container {
-  display: flex;
-  flex: 1;
-  width: 100%;
-}
-
-/* Square sections (left, right, and id) */
-.square-section {
-  aspect-ratio: 1/1;
+/* Left panel (contains ID, Icon, Delay) */
+.left-panel {
+  width: 80px;
+  height: 100%;
   flex-shrink: 0;
-  overflow: hidden; /* Prevent content from breaking the square shape */
+  border-right: 1px solid #e4e7ed;
 }
 
-/* Making sure squares have the same side length as their container height */
+.left-panel-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+}
+
+/* ID section in left panel */
 .id-section {
-  width: 50px; /* Same as top-container height */
-  height: 50px;
-}
-
-.left-section, .right-section {
-  height: 100%; /* Full height of the bottom container */
-  width: auto; /* Width determined by aspect-ratio */
-}
-
-/* Icon container and content styling */
-.icon-container {
-  overflow: hidden;
+  height: 40px;
+  border-bottom: 1px solid #e4e7ed;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #f5f7fa;
+}
+
+.id-content {
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+/* Icon section in left panel */
+.icon-section {
+  flex: 1;
+  border-bottom: 1px solid #e4e7ed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f7fa;
+  padding: 8px;
+}
+
+.icon-container {
   width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Delay section in left panel */
+.delay-section {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f7fa;
+}
+
+.delay-content {
+  text-align: center;
+}
+
+.delay-text {
+  font-size: 0.75em;
+  font-weight: 500;
+  margin-bottom: 2px;
+  color: #606266;
+}
+
+.delay-value {
+  font-size: 0.7em;
+  color: #909399;
+}
+
+/* Right panel styling */
+.right-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   height: 100%;
 }
 
-.icon-content {
-  max-width: 80%;
-  max-height: 80%;
-  object-fit: contain;
+/* RG Cube section at top of right panel */
+.rg-cube-section {
+  height: 40px;
+  border-bottom: 1px solid #e4e7ed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f7fa;
 }
 
-/* Middle section (flexible with min-width) */
+/* Middle section for buttons */
 .middle-section {
   flex: 1;
-  min-width: 150px;
   overflow: hidden;
-  margin: 0 4px; /* Add some spacing between left and right sections */
+  background-color: #f5f7fa;
 }
 
 /* Cabinet layout styling */
@@ -287,10 +337,13 @@ onMounted(() => {
 
 .xbox {
   fill: #107c10;
+  width: 100%;
+  height: 100%;
 }
 
 .dualshock {
   fill: #003087;
+  width: 100%;
+  height: 100%;
 }
-
 </style>

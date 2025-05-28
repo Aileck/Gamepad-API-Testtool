@@ -273,7 +273,7 @@ async function handleWebSocketMessage(ws: WebSocket, message: any, clientIp: str
         ws.send(encode(response));
     }
 
-    async function handleDisconnect(ws: WebSocket, payload: WebSocketGamepadPayload): Promise<void> {
+    async function handleDisconnect(_: WebSocket, payload: WebSocketGamepadPayload): Promise<void> {
         const { id } = payload;
         clientMap.delete(id as number);
 
