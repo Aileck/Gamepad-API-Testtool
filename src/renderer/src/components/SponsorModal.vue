@@ -5,12 +5,14 @@ import { Message, Star } from '@element-plus/icons-vue'
 import { ElDialog, ElIcon, ElImage, ElButton } from 'element-plus'
 import 'element-plus/dist/index.css'
 
+import wechatQR from '../../../../assets/sprites/sponsor_wechat_qr.png'
+import kofiButton from '../../../../assets/sprites/support_me_on_kofi_dark.png'
+
 const { t } = useI18n()
 const dialogVisible = ref(false)
 
-const openAlipay = () => {
-  // 这里添加打开支付宝的逻辑
-  window.open('支付宝链接')
+const openKofi = () => {
+  window.open('https://ko-fi.com/aileck', '_blank')
 }
 
 defineExpose({
@@ -30,23 +32,22 @@ defineExpose({
     destroy-on-close
   >
     <div class="sponsor-layout">
-      <!-- 左侧边栏 -->
       <div class="sponsor-sidebar">
         <div class="sidebar-section support-methods">
           <h3>{{ t('sponsor_support_title') }}</h3>
           <div class="support-buttons">
             <el-button 
               type="primary" 
-              class="support-button"
-              @click="openAlipay"
+              class="support-button kofi-button"
+              @click="openKofi"
             >
-              {{ t('sponsor_button_text') }}
+              <img :src="kofiButton" alt="Support me on Ko-fi" />
             </el-button>
             <div class="qr-wrapper">
               <el-image 
-                :src="t('sponsor_wechat_qr')" 
+                :src="wechatQR" 
                 fit="contain"
-                :preview-src-list="[t('sponsor_wechat_qr')]"
+                :preview-src-list="[wechatQR]"
               >
                 <template #placeholder>
                   <div class="image-placeholder">Loading...</div>
@@ -63,7 +64,6 @@ defineExpose({
         </div>
       </div>
 
-      <!-- 右侧主内容 -->
       <div class="sponsor-main">
         <div class="main-content" v-html="t('sponsor_main_content')"></div>
       </div>
@@ -132,14 +132,27 @@ defineExpose({
   font-size: 14px;
 }
 
+.contact-links :deep(.contact-email) {
+  font-family: monospace;
+  font-size: 15px;
+  color: var(--el-text-color-primary);
+  padding: 8px 12px;
+  background-color: var(--el-fill-color-light);
+  border-radius: 4px;
+  margin-bottom: 12px;
+  user-select: all;
+  cursor: text;
+}
+
 .contact-links :deep(a) {
   display: flex;
   align-items: center;
   gap: 8px;
   color: var(--el-color-primary);
   text-decoration: none;
-  margin: 12px 0;
+  margin: 8px 0;
   font-size: 14px;
+  padding: 4px 0;
 }
 
 .contact-links :deep(a:hover) {
@@ -165,14 +178,17 @@ defineExpose({
 .main-content :deep(li) {
   position: relative;
   margin: 12px 0;
-  padding-left: 20px;
+  padding-left: 24px;
 }
 
 .main-content :deep(li::before) {
   content: "•";
   position: absolute;
-  left: 0;
+  left: 6px;
+  top: -1px;
   color: var(--el-color-primary);
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .main-content :deep(strong) {
@@ -204,7 +220,6 @@ defineExpose({
   font-weight: 600;
 }
 
-/* 响应式调整 */
 @media (max-width: 768px) {
   .sponsor-layout {
     flex-direction: column;
@@ -221,5 +236,23 @@ defineExpose({
   .sponsor-main {
     padding-left: 0;
   }
+}
+
+.kofi-button {
+  padding: 0;
+  border: none;
+  background: transparent;
+  width: auto;
+  height: auto;
+}
+
+.kofi-button:hover {
+  background: transparent;
+  opacity: 0.9;
+}
+
+.kofi-button img {
+  height: 36px;
+  width: auto;
 }
 </style> 

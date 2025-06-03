@@ -33,19 +33,19 @@ export default {
     download_contact_info: '如果下载链接失效，请在B站联系 Aileck：',
 
     help_title: '帮助',
+    help_warning: '⚠️ 这是预览版本，可能存在崩溃风险，后续更新可能导致部分数据丢失。',
+    help_video_placeholder: '教程视频即将上线',
     help_section_1_title: '开始使用',
     help_section_1_content: `
-      <p>Phone2Pad 可以让你把手机变成电脑上的游戏手柄。按照以下步骤开始使用：</p>
-      <ol>
+      <ul>
         <li>在手机上安装 Phone2Pad 手机应用</li>
         <li>在电脑上安装 ViGEm 驱动</li>
         <li>确保手机和电脑连接到同一网络</li>
         <li>扫描二维码或手动输入桌面应用显示的 IP 和端口</li>
-      </ol>
+      </ul>
     `,
     help_section_2_title: '常见问题解决',
     help_section_2_content: `
-      <p>如果遇到问题，请尝试以下方法：</p>
       <ul>
         <li>确保设备在同一网络下</li>
         <li>检查 ViGEm 驱动是否正确安装</li>
@@ -53,16 +53,17 @@ export default {
         <li>确保防火墙没有阻止连接</li>
       </ul>
     `,
-    help_section_3_title: '其他信息',
+    help_section_3_title: '主要功能',
     help_section_3_content: `
-      <p>Phone2Pad 支持 Xbox 和 DualShock 手柄布局。你可以：</p>
       <ul>
-        <li>同时连接多个手机</li>
-        <li>自定义按键映射</li>
-        <li>监控连接状态和延迟</li>
+        <li>将手机变成电脑手柄，支持虚拟按键和实体手柄</li>
+        <li>可识别已连接到手机的实体手柄按键，并发送到电脑</li>
+        <li>支持 Xbox 360 和 DualShock 4 手柄布局</li>
+        <li>可同时连接多个手机作为手柄使用</li>
+        <li>支持自定义手机端按键布局和按键风格</li>
       </ul>
     `,
-
+    help_section_4_title: '手柄按键设置',
     sponsor_title: '支持项目',
     sponsor_support_title: '赞助方式',
     sponsor_contact_title: '联系方式',
@@ -75,14 +76,15 @@ export default {
         <li>添加陀螺仪和震动反馈</li>
         <li>支持自定义按键和触控条</li>
         <li>开发自动识别连接和蓝牙连接</li>
-        <li>支持iOS、Linux掌机和PSVita（如果有赞助的话，目前没有购买设备的资金😵）</li>
+        <li>支持iOS、Linux掌机和PSVita（如有足够赞助，目前没有购买设备的资金😵）</li>
       </ul>
 
-      <p>可以用右边的联系方式，告诉我你在使用，反馈喜欢或不喜欢的地方，让我知道我正在做有意义的事情！</p>
+      <p>欢迎通过右侧联系方式反馈你的使用体验，无论是优点还是不足，都是我改进和坚持的动力。</p>
     `,
     sponsor_contact_content: `
+      <div class="contact-email">aileck.developer@gmail.com</div>
       <a href="mailto:aileck.developer@gmail.com">
-        <span>邮件联系我</span>
+        <span>发送邮件</span>
       </a>
       <a href="https://space.bilibili.com/2459782" target="_blank">
         <span>Bilibili私信我</span>
@@ -90,5 +92,15 @@ export default {
     `,
     sponsor_wechat: '微信支付',
     sponsor_button_text: '打开支付宝',
+    help_video_url: 'https://www.bilibili.com/video/xxx',
+    help_video_text: '观看教程视频',
+    controller_customization: "手柄按键设置",
+    xbox_layout: "Xbox布局",
+    dualshock_layout: "DualShock布局",
+    button_pressed: "已按下",
+    mode_default: "默认模式",
+    mode_swipe: "滑动模式",
+    mode_toggle: "开关模式",
+    controller_customization_desc: "这是一个按键定制的演示。你可以在这里体验不同的按键行为，然后在手机端设置相同的操作模式。",
 }
     

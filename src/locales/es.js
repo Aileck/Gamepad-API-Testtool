@@ -49,17 +49,42 @@ export default {
       <p>No dudes en usar los métodos de contacto a la derecha para contarme que estás usando la app, compartir lo que te gusta o no, ¡y ayudarme a saber que estoy haciendo algo significativo!</p>
     `,
     sponsor_contact_content: `
+      <div class="contact-email">aileck.developer@gmail.com</div>
       <a href="mailto:aileck.developer@gmail.com">
-        <span>Envíame un correo</span>
-      </a>
-      <a href="https://space.bilibili.com/2459782" target="_blank">
-        <span>Escríbeme en Bilibili</span>
+        <span>Enviar Correo</span>
       </a>
     `,
-    sponsor_wechat: 'WeChat Pay',
-    sponsor_alipay: 'Alipay',
-    sponsor_wechat_qr: '', // Add WeChat QR code image path
-    sponsor_alipay_qr: '', // Add Alipay QR code image path
-    sponsor_button_text: 'Abrir Alipay',
+    help_title: 'Ayuda',
+    help_warning: '⚠️ Esta es una versión preliminar. Puede haber riesgos de fallos y pérdida de datos en futuras actualizaciones.',
+    help_video_placeholder: 'Video tutorial próximamente',
+    help_section_1_title: 'Primeros Pasos',
+    help_section_1_content: `
+      <ul>
+        <li>Instala la aplicación móvil Phone2Pad en tu teléfono</li>
+        <li>Instala el controlador ViGEm en tu PC</li>
+        <li>Asegúrate de que ambos dispositivos estén en la misma red</li>
+        <li>Escanea el código QR o ingresa manualmente la IP y el puerto</li>
+      </ul>
+    `,
+    help_section_2_title: 'Solución de Problemas',
+    help_section_2_content: `
+      <ul>
+        <li>Verifica que los dispositivos estén en la misma red</li>
+        <li>Comprueba que el controlador ViGEm esté instalado correctamente</li>
+        <li>Intenta reiniciar ambas aplicaciones</li>
+        <li>Asegúrate de que el firewall no esté bloqueando la conexión</li>
+      </ul>
+    `,
+    help_section_3_title: 'Características Principales',
+    help_section_3_content: `
+      <ul>
+        <li>Compatible con diseños de Xbox 360 y DualShock 4</li>
+        <li>Conecta varios teléfonos simultáneamente como controles</li>
+        <li>Personaliza la disposición y estilo de botones en la app móvil</li>
+      </ul>
+    `,
+    help_section_4_title: 'Personalización de Botones',
+    help_video_url: 'https://youtu.be/xxx',
+    help_video_text: 'Ver Tutorial',
 }
   

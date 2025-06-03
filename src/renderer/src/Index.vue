@@ -121,11 +121,11 @@ const handleSponsorClick = () => {
         <div class="connection-info">
           <el-space direction="vertical" :size="20" alignment="center">
             <div class="ip-info">
-              <span>IP:</span>
+              <span>{{ $t('ip') }}:</span>
               <el-button size="default" type="warning">{{ sessionIP }}</el-button>
             </div>
             <div class="port-info">
-              <span>Port:</span>
+              <span>{{ $t('port') }}</span>
               <el-button size="default" type="warning">{{ sessionPort }}</el-button>
             </div>
           </el-space>

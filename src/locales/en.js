@@ -32,35 +32,39 @@ export default {
   download_contact_info: 'If any download links are not working, please contact Aileck on ',
 
   help_title: 'Help',
+  help_warning: '⚠️ This is a preview version. There might be risks of crashes and data loss in future updates.',
+  help_video_placeholder: 'Tutorial video coming soon',
   help_section_1_title: 'Getting Started',
   help_section_1_content: `
-    <p>Phone2Pad allows you to use your phone as a gamepad on your PC. Follow these steps to get started:</p>
-    <ol>
-      <li>Install the Phone2Pad mobile app on your phone</li>
-      <li>Install the ViGEm driver on your PC</li>
-      <li>Make sure both devices are connected to the same network</li>
-      <li>Scan the QR code or manually enter the IP and port shown on the desktop app</li>
-    </ol>
+    <ul>
+      <li>Install Phone2Pad mobile app on your phone</li>
+      <li>Install ViGEm driver on your PC</li>
+      <li>Make sure both devices are on the same network</li>
+      <li>Scan QR code or manually enter the IP and port shown on desktop app</li>
+    </ul>
   `,
   help_section_2_title: 'Troubleshooting',
   help_section_2_content: `
-    <p>If you encounter any issues, try the following:</p>
     <ul>
-      <li>Ensure both devices are on the same network</li>
-      <li>Check if the ViGEm driver is properly installed</li>
-      <li>Try restarting both the mobile app and desktop app</li>
-      <li>Make sure your firewall is not blocking the connection</li>
+      <li>Ensure devices are on the same network</li>
+      <li>Check if ViGEm driver is properly installed</li>
+      <li>Try restarting both mobile and desktop apps</li>
+      <li>Make sure firewall is not blocking the connection</li>
     </ul>
   `,
-  help_section_3_title: 'Additional Information',
+  help_section_3_title: 'Main Features',
   help_section_3_content: `
-    <p>Phone2Pad supports both Xbox and DualShock controller layouts. You can:</p>
     <ul>
-      <li>Connect multiple phones simultaneously</li>
-      <li>Customize button mappings</li>
-      <li>Monitor connection status and latency</li>
+      <li>Turn your phone into a PC gamepad with virtual buttons or physical controller support</li>
+      <li>Detect and forward physical controller inputs from your phone to PC</li>
+      <li>Supports Xbox 360 and DualShock 4 controller layouts</li>
+      <li>Connect multiple phones simultaneously as controllers</li>
+      <li>Customize button layout and style on mobile app</li>
     </ul>
   `,
+  help_section_4_title: 'Controller Customization',
+  help_video_url: 'https://youtu.be/xxx',
+  help_video_text: 'Watch Tutorial',
 
   sponsor_title: 'Support the Project',
   sponsor_support_title: 'Support Methods',
@@ -80,16 +84,17 @@ export default {
     <p>Feel free to use the contact methods on the right to let me know you're using the app, share what you like or dislike, and help me know I'm making something meaningful!</p>
   `,
   sponsor_contact_content: `
+    <div class="contact-email">aileck.developer@gmail.com</div>
     <a href="mailto:aileck.developer@gmail.com">
-      <span>Email me</span>
-    </a>
-    <a href="https://space.bilibili.com/2459782" target="_blank">
-      <span>Message me on Bilibili</span>
+      <span>Send Email</span>
     </a>
   `,
-  sponsor_wechat: 'WeChat Pay',
-  sponsor_alipay: 'Alipay',
-  sponsor_wechat_qr: '', // Add WeChat QR code image path
-  sponsor_alipay_qr: '', // Add Alipay QR code image path
-  sponsor_button_text: 'Open Alipay',
+  controller_customization: "Controller Customization",
+  xbox_layout: "Xbox Layout",
+  dualshock_layout: "DualShock Layout",
+  button_pressed: "Pressed",
+  mode_default: "Default Mode",
+  mode_swipe: "Swipe Mode",
+  mode_toggle: "Toggle Mode",
+  controller_customization_desc: "This is a button customization demo. You can try different button behaviors here and then apply the same settings on your mobile app.",
 }
