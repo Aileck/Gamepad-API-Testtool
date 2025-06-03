@@ -2,14 +2,19 @@
 import '../../../assets/styles/fonts.css';
 import '../../../node_modules/element-plus/dist/index.css'
 
-import { ElContainer, ElHeader, ElMain, ElAside, ElSpace, ElButton, ElRow, ElCol, ElIcon, ElScrollbar, ElText } from 'element-plus'
-import { ElementPlus, InfoFilled, QuestionFilled, Document, Download, Star } from '@element-plus/icons-vue'
+import { ElContainer, ElHeader, ElMain, ElAside, ElSpace, ElButton, ElRow, ElCol, ElIcon, ElScrollbar, ElText, ElDialog } from 'element-plus'
+import { InfoFilled, QuestionFilled, Document, Download, Star } from '@element-plus/icons-vue'
 
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import QRCode from 'qrcode'
 
 import GamepadBox from './components/GamepadBox.vue';
+import LanguageModal from './components/LanguageModal.vue'
+import DownloadModal from './components/DownloadModal.vue'
+import HelpModal from './components/HelpModal.vue'
+import SponsorModal from './components/SponsorModal.vue'
 
 const sessionIP = ref("No internet connection");
 const sessionPort = ref("No internet connection");
@@ -23,6 +28,13 @@ interface GamepadSlot {
 }
 
 const gamepadSlots = ref<(GamepadSlot | null)[]>([]);
+
+const languageModalRef = ref()
+const downloadModalRef = ref()
+const helpModalRef = ref()
+const sponsorModalRef = ref()
+
+const { locale } = useI18n();
 
 async function awakeCommunication() {
   await window.api.awake_wss();
@@ -73,7 +85,29 @@ onMounted(async () => {
       gamepadSlots.value[index] = null;
     }
   });
+
+  // Initialize saved language preference
+  const savedLanguage = localStorage.getItem('preferred_language')
+  if (savedLanguage) {
+    locale.value = savedLanguage
+  }
 });
+
+const handleLanguageClick = () => {
+  languageModalRef.value?.showDialog()
+}
+
+const handleDownloadClick = () => {
+  downloadModalRef.value?.showDialog()
+}
+
+const handleHelpClick = () => {
+  helpModalRef.value?.showDialog()
+}
+
+const handleSponsorClick = () => {
+  sponsorModalRef.value?.showDialog()
+}
 </script>
 
 <template>
@@ -100,13 +134,13 @@ onMounted(async () => {
         <div class="action-buttons">
           <el-row :gutter="10" justify="center">
             <el-col :span="12">
-              <el-button size="small" type="info" plain>
+              <el-button size="small" type="info" plain @click="handleHelpClick">
                 <el-icon><QuestionFilled /></el-icon>
                 {{ $t('button_help') }}
               </el-button>
             </el-col>
             <el-col :span="12">
-              <el-button size="small" type="info" plain>
+              <el-button size="small" type="info" plain @click="handleLanguageClick">
                 <el-icon><Document /></el-icon>
                 {{ $t('button_language') }}
               </el-button>
@@ -114,13 +148,13 @@ onMounted(async () => {
           </el-row>
           <el-row :gutter="10" justify="center" style="margin-top: 10px;">
             <el-col :span="12">
-              <el-button size="small" type="info" plain>
+              <el-button size="small" type="info" plain @click="handleDownloadClick">
                 <el-icon><Download /></el-icon>
                 {{ $t('button_download') }}
               </el-button>
             </el-col>
             <el-col :span="12">
-              <el-button size="small" type="info" plain>
+              <el-button size="small" type="info" plain @click="handleSponsorClick">
                 <el-icon><Star /></el-icon>
                 {{ $t('button_sponsor') }}
               </el-button>
@@ -169,6 +203,10 @@ onMounted(async () => {
       </el-main>
     </el-container>
   </el-container>
+  <LanguageModal ref="languageModalRef" />
+  <DownloadModal ref="downloadModalRef" />
+  <HelpModal ref="helpModalRef" />
+  <SponsorModal ref="sponsorModalRef" />
 </template>
 
 <style>

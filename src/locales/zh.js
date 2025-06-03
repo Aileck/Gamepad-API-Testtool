@@ -15,5 +15,80 @@ export default {
     button_language: '语言',
     button_download: '下载',
     button_sponsor: '赞助',
-  }
+
+    language_modal_title: '选择语言',
+    language_modal_en: '英语',
+    language_modal_zh: '中文',
+    language_modal_es: '西班牙语',
+
+    download_title: '下载',
+    download_mobile_title: 'Phone2Pad 手机应用',
+    download_mobile_description: '扫描二维码或手动输入IP和端口，将手机模拟成游戏手柄',
+    download_vigem_title: 'Phone2Pad Windows驱动',
+    download_vigem_description: '安装ViGEm驱动以支持手柄模拟功能',
+
+    download_on_itch_io: '从itch.io下载',
+    download_on_github: '从GitHub下载',
+    download_on_baidu: '从百度网盘下载',
+    download_contact_info: '如果下载链接失效，请在B站联系 Aileck：',
+
+    help_title: '帮助',
+    help_section_1_title: '开始使用',
+    help_section_1_content: `
+      <p>Phone2Pad 可以让你把手机变成电脑上的游戏手柄。按照以下步骤开始使用：</p>
+      <ol>
+        <li>在手机上安装 Phone2Pad 手机应用</li>
+        <li>在电脑上安装 ViGEm 驱动</li>
+        <li>确保手机和电脑连接到同一网络</li>
+        <li>扫描二维码或手动输入桌面应用显示的 IP 和端口</li>
+      </ol>
+    `,
+    help_section_2_title: '常见问题解决',
+    help_section_2_content: `
+      <p>如果遇到问题，请尝试以下方法：</p>
+      <ul>
+        <li>确保设备在同一网络下</li>
+        <li>检查 ViGEm 驱动是否正确安装</li>
+        <li>尝试重启手机应用和桌面应用</li>
+        <li>确保防火墙没有阻止连接</li>
+      </ul>
+    `,
+    help_section_3_title: '其他信息',
+    help_section_3_content: `
+      <p>Phone2Pad 支持 Xbox 和 DualShock 手柄布局。你可以：</p>
+      <ul>
+        <li>同时连接多个手机</li>
+        <li>自定义按键映射</li>
+        <li>监控连接状态和延迟</li>
+      </ul>
+    `,
+
+    sponsor_title: '支持项目',
+    sponsor_support_title: '赞助方式',
+    sponsor_contact_title: '联系方式',
+    sponsor_main_content: `
+      <p>感谢你使用Phone2Pad！</p>
+      <p>这个APP是完全免费的，但开发和维护需要投入大量时间和精力。如果你觉得它对你有帮助，欢迎使用<strong>右边的赞助方式</strong>帮助我，让这个APP能持续更新下去！</p>
+      
+      <p>未来计划（在我能做到的范围）：</p>
+      <ul>
+        <li>添加陀螺仪和震动反馈</li>
+        <li>支持自定义按键和触控条</li>
+        <li>开发自动识别连接和蓝牙连接</li>
+        <li>支持iOS、Linux掌机和PSVita（如果有赞助的话，目前没有购买设备的资金😵）</li>
+      </ul>
+
+      <p>可以用右边的联系方式，告诉我你在使用，反馈喜欢或不喜欢的地方，让我知道我正在做有意义的事情！</p>
+    `,
+    sponsor_contact_content: `
+      <a href="mailto:aileck.developer@gmail.com">
+        <span>邮件联系我</span>
+      </a>
+      <a href="https://space.bilibili.com/2459782" target="_blank">
+        <span>Bilibili私信我</span>
+      </a>
+    `,
+    sponsor_wechat: '微信支付',
+    sponsor_button_text: '打开支付宝',
+}
     

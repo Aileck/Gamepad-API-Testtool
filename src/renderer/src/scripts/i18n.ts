@@ -4,8 +4,9 @@ import es from '../../../locales/es'
 import zh from '../../../locales/zh'
 
 const i18n = createI18n({
+  legacy: false, // Enable Composition API mode
   locale: 'en',
-  fallbackLocale: 'en', 
+  fallbackLocale: 'en',
   messages: {
     en,
     zh,

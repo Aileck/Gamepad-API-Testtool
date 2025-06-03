@@ -84,7 +84,7 @@ onMounted(() => {
           
           <div class="right-panel">
             <div class="section device-number-section">
-              <div class="section-content">Device Nº{{ boxNumber }}</div>
+              <div class="section-content">{{ $t('device') }} Nº{{ boxNumber }}</div>
             </div>
             
             <!-- Bottom buttons section -->
