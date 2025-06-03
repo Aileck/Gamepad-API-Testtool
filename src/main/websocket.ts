@@ -49,19 +49,12 @@ interface ClientData {
   ip: string
   websocket: WebSocket
   clientId: number
-
-  // Connection test data
   isTestingDelay: boolean
-  // The time when server sent the message
   T1: number
-  // The time when client received the message
   T2: number
-  // The time when client sent the message
   T3: number
-  // The time when server received the message
   T4: number
-
-  rtt: number // Round trip time
+  rtt: number
 }
 
 const clientMap: Map<number, ClientData> = new Map() // Store client connections by ID
@@ -74,7 +67,6 @@ function newClientData(ip: string, websocket: WebSocket, clientId: number): Clie
     ip,
     websocket,
     clientId,
-
     isTestingDelay: false,
     T1: 0,
     T2: 0,
@@ -83,6 +75,7 @@ function newClientData(ip: string, websocket: WebSocket, clientId: number): Clie
     rtt: 0
   }
 }
+
 function getLocalIpAddresses(): string[] {
   const nets = networkInterfaces()
   const results: string[] = []
@@ -178,28 +171,20 @@ function startServer(portNumber?: number): void {
     })
 
     ws.on('close', () => {
-      // Find the client data and handle disconnection
       for (const [id, data] of clientMap.entries()) {
         const _ws = data.websocket
         if (_ws === ws) {
-          // Release gamepad and notify renderer
           releaseGamepad(data.clientId)
           mainWindow?.webContents.send('gamepad:disconnected', { id: data.clientId })
           clientMap.delete(id)
+          connections.delete(ws)
+          console.log(`Client disconnected: ${clientIp}`)
           break
         }
+        else {
+          console.log(`Trying to disconnect client ${id} but not found`)
+        }
       }
-
-      // Remove the client from the connections set
-      connections.delete(ws)
-
-      mainWindow?.webContents.send('client-disconnected', {
-        ip: clientIp,
-        totalConnections: connections.size
-      })
-
-      mainWindow?.webContents.send('write-log', `Client: ${clientIp} disconnected`)
-      console.log(`Client disconnected: ${clientIp}`)
     })
   })
 }
