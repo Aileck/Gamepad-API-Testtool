@@ -55,13 +55,12 @@ export default {
     `,
     help_section_3_title: '主要功能',
     help_section_3_content: `
-      <ul>
-        <li>将手机变成电脑手柄，支持虚拟按键和实体手柄</li>
-        <li>可识别已连接到手机的实体手柄按键，并发送到电脑</li>
-        <li>支持 Xbox 360 和 DualShock 4 手柄布局</li>
-        <li>可同时连接多个手机作为手柄使用</li>
-        <li>支持自定义手机端按键布局和按键风格</li>
-      </ul>
+    <ul>
+        <li>手机变为电脑手柄，支持虚拟按键和实体手柄输入</li>
+        <li>自动识别已连接的实体手柄按键，并将操作发送至电脑</li>
+        <li>兼容 Xbox 360 与 DualShock 4 布局，支持自定义按键样式与布局</li>
+        <li>支持多部设备同时连接，游玩多人游戏</li>
+    </ul>
     `,
     help_section_4_title: '手柄按键设置',
     sponsor_title: '支持项目',

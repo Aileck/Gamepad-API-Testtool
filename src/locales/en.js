@@ -54,13 +54,12 @@ export default {
   `,
   help_section_3_title: 'Main Features',
   help_section_3_content: `
-    <ul>
-      <li>Turn your phone into a PC gamepad with virtual buttons or physical controller support</li>
-      <li>Detect and forward physical controller inputs from your phone to PC</li>
-      <li>Supports Xbox 360 and DualShock 4 controller layouts</li>
-      <li>Connect multiple phones simultaneously as controllers</li>
-      <li>Customize button layout and style on mobile app</li>
-    </ul>
+  <ul>
+    <li>Use your phone as a PC game controller, supporting both virtual buttons and physical gamepads</li>
+    <li>Automatically detects connected physical controllers and transmits input to the computer</li>
+    <li>Compatible with Xbox 360 and DualShock 4 layouts, with support for custom button styles and layouts</li>
+    <li>Supports simultaneous connection of multiple mobile devices for local multiplayer gaming</li>
+  </ul>
   `,
   help_section_4_title: 'Controller Customization',
   help_video_url: 'https://youtu.be/xxx',

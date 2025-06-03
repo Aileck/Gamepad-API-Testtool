@@ -77,11 +77,12 @@ export default {
     `,
     help_section_3_title: 'Características Principales',
     help_section_3_content: `
-      <ul>
-        <li>Compatible con diseños de Xbox 360 y DualShock 4</li>
-        <li>Conecta varios teléfonos simultáneamente como controles</li>
-        <li>Personaliza la disposición y estilo de botones en la app móvil</li>
-      </ul>
+    <ul>
+        <li>Utiliza el teléfono como un mando para PC, compatible con botones virtuales y mandos físicos</li>
+        <li>Detecta automáticamente los botones de mandos físicos conectados y transmite las acciones al ordenador</li>
+        <li>Compatible con las distribuciones de mando de Xbox 360 y DualShock 4, con soporte para personalización de diseño y estilo de botones</li>
+        <li>Permite la conexión simultánea de varios dispositivos móviles para juegos multijugador locales</li>
+    </ul>
     `,
     help_section_4_title: 'Personalización de Botones',
     help_video_url: 'https://youtu.be/xxx',
