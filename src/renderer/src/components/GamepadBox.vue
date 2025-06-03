@@ -82,11 +82,9 @@ onMounted(() => {
             </div>
           </div>
           
-          <!-- Right section with top RG Cube and bottom buttons -->
           <div class="right-panel">
-            <!-- Top RG Cube section -->
-            <div class="section rg-cube-section">
-              <div class="section-content">RG Cube</div>
+            <div class="section device-number-section">
+              <div class="section-content">Device Nº{{ boxNumber }}</div>
             </div>
             
             <!-- Bottom buttons section -->
@@ -246,8 +244,8 @@ onMounted(() => {
   height: 100%;
 }
 
-/* RG Cube section at top of right panel */
-.rg-cube-section {
+/* Device number section at top of right panel */
+.device-number-section {
   height: 40px;
   border-bottom: 1px solid #e4e7ed;
   display: flex;
