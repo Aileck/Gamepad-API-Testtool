@@ -2,7 +2,7 @@
 import '../../../assets/styles/fonts.css';
 import '../../../node_modules/element-plus/dist/index.css'
 
-import { ElContainer, ElHeader, ElMain, ElAside, ElSpace, ElButton, ElRow, ElCol, ElIcon, ElScrollbar, ElText, ElDialog } from 'element-plus'
+import { ElContainer, ElHeader, ElMain, ElAside, ElSpace, ElButton, ElRow, ElCol, ElIcon, ElScrollbar, ElText } from 'element-plus'
 import { InfoFilled, QuestionFilled, Document, Download, Star } from '@element-plus/icons-vue'
 
 import { ref, onMounted } from 'vue'
@@ -22,7 +22,7 @@ const sessionPort = ref("No internet connection");
 const qrCanvas = ref(null)
 
 const maxGamepads = ref(0);
-const serverStatus = ref('normal');
+const serverStatus = ref('loading');
 const showDownloadButton = ref(false);
 const isFirstHelpClick = ref(localStorage.getItem('help_clicked') !== 'true');
 const isFirstSponsorClick = ref(localStorage.getItem('sponsor_clicked') !== 'true');
@@ -61,28 +61,40 @@ async function startCommunication() {
 }
 
 onMounted(async () => {
-  await awakeCommunication();
-  await startCommunication();
-
-  maxGamepads.value = await window.api.getMaxGamepads();
-  gamepadSlots.value = Array(maxGamepads.value).fill(null);
-
-  // Add server status listener
+  // 先设置事件监听器
   window.api.onServerStatus((_, data) => {
+    console.log('Received server status:', data);
     if (data.status === 'error') {
       if (data.error === 'VIGEM_ERROR_BUS_NOT_FOUND') {
+        console.log('Setting status to no_vigem');
         serverStatus.value = 'no_vigem';
         showDownloadButton.value = true;
       } else if (data.error === 'NO_NETWORK') {
+        console.log('Setting status to no_network');
         serverStatus.value = 'no_network';
       } else {
+        console.log('Setting status to unknown_error');
         serverStatus.value = 'unknown_error';
       }
     } else if (data.status === 'started') {
+      console.log('Setting status to normal');
       serverStatus.value = 'normal';
       showDownloadButton.value = false;
     }
+    console.log('Current serverStatus:', serverStatus.value);
   });
+
+  // 然后再初始化通信
+  await awakeCommunication();
+  await startCommunication();
+
+  // 添加调试日志
+  console.log('Current locale:', locale.value);
+  console.log('Saved language:', localStorage.getItem('preferred_language'));
+  console.log('Current serverStatus:', serverStatus.value);
+
+  maxGamepads.value = await window.api.getMaxGamepads();
+  gamepadSlots.value = Array(maxGamepads.value).fill(null);
 
   QRCode.toCanvas(qrCanvas.value, 
     `{
@@ -233,13 +245,15 @@ const handleSponsorClick = () => {
             >
               <el-icon><InfoFilled /></el-icon> 
               <span v-html="$t(
-                serverStatus === 'normal' 
-                  ? 'use_instructions' 
-                  : serverStatus === 'no_vigem'
-                    ? 'no_vigem_installed_instructions'
-                    : serverStatus === 'no_network'
-                      ? 'no_internet_instructions'
-                      : 'unknown_error_instructions'
+                serverStatus === 'loading'
+                  ? 'loading_instructions'
+                  : serverStatus === 'normal' 
+                    ? 'use_instructions' 
+                    : serverStatus === 'no_vigem'
+                      ? 'no_vigem_installed_instructions'
+                      : serverStatus === 'no_network'
+                        ? 'no_internet_instructions'
+                        : 'unknown_error_instructions'
               )"> </span>
             </el-text>
           </div>

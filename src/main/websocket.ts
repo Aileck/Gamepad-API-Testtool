@@ -187,39 +187,44 @@ function startServer(portNumber?: number): void {
       port = currentPort
       const error = await initializeGamepadSystem()
 
+      console.log('GamepadSystem initialization result:', error);
+
       if (error === vigem_error.VIGEM_ERROR_NONE) {
-        console.log("LO");
+        console.log('ViGEm initialized successfully');
+        console.log('Sending started status');
+        mainWindow?.webContents.send('server-status', {
+          status: 'started',
+          port: port
+        })
+        
+        console.log(`WebSocket server started on port ${port}`)
       } else {
-        console.log(error);
-        console.log(vigem_error.VIGEM_ERROR_NONE);
-
-
-      }
-
-      if (error !== vigem_error.VIGEM_ERROR_NONE) {
         if (error === vigem_error.VIGEM_ERROR_BUS_NOT_FOUND) {
+          console.log("VIGEM_ERROR_BUS_NOT_FOUND current error");
+          console.log(error);
+          console.log("Found error");
+          console.log(vigem_error.VIGEM_ERROR_BUS_NOT_FOUND);
+          console.log('Sending VIGEM_ERROR_BUS_NOT_FOUND status');
           mainWindow?.webContents.send('server-status', {
             status: 'error',
             error: 'VIGEM_ERROR_BUS_NOT_FOUND',
             shouldDownload: true
           } as ServerStatus)
         } else {
+          console.log('Sending unknown error status');
           mainWindow?.webContents.send('server-status', {
             status: 'error',
             error: 'Unknown'
           } as ServerStatus)
         }
-
-
-        return
+        
+        // 在发送错误状态后关闭 WebSocket 服务器
+        wss?.close(() => {
+          console.log('WebSocket server closed due to ViGEm error');
+          wss = null;
+        });
+        return;
       }
-
-      mainWindow?.webContents.send('server-status', {
-        status: 'started',
-        port: port
-      })
-      
-      console.log(`WebSocket server started on port ${port}`)
     })
 
     wss.on('connection', (ws, req) => {

@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Message, Star } from '@element-plus/icons-vue'
-import { ElDialog, ElIcon, ElImage, ElButton } from 'element-plus'
+import { ElDialog , ElImage, ElButton } from 'element-plus'
 import 'element-plus/dist/index.css'
 
 import wechatQR from '../../../../assets/sprites/sponsor_wechat_qr.png'

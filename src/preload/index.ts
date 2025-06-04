@@ -28,7 +28,10 @@ const api = {
     ipcRenderer.on('gamepad:registered', callback),
 
   onServerStatus: (callback: (event: Electron.IpcRendererEvent, data: { status: string, error?: string }) => void) =>
-    ipcRenderer.on('server-status', callback),
+    ipcRenderer.on('server-status', (event, data) => {
+      console.log('Preload received server-status:', data);
+      callback(event, data);
+    }),
 
   onXboxInput: (callback: (event: Electron.IpcRendererEvent, data: { id: number, gamepadData: any }) => void) => {
     ipcRenderer.on('gamepad:input-xbox', callback);

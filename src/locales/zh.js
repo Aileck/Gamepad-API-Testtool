@@ -1,4 +1,5 @@
 export default {
+    loading_instructions: '正在初始化系统，请稍候...',
     use_instructions: '使用Phone2Pad手机应用程序扫描二维码或手动输入IP和端口。<br> 确保两台设备连接到同一网络。',
     no_internet_instructions: '为了把手机和电脑连接起来，你需要一个稳定的互联网连接。',
     no_vigem_installed_instructions: '检测到缺少Vigem驱动，请在这个链接里下载并且安装。<br> https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe',

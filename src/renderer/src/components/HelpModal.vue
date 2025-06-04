@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Warning, QuestionFilled, VideoCamera, Monitor } from '@element-plus/icons-vue'
+import { QuestionFilled, VideoCamera, Monitor } from '@element-plus/icons-vue'
 import { ElDialog, ElScrollbar, ElDivider, ElIcon, ElAlert, ElButton, ElRadioGroup, ElRadio, ElAffix } from 'element-plus'
 import 'element-plus/dist/index.css'
 
