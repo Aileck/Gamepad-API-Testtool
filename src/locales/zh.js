@@ -2,6 +2,7 @@ export default {
     use_instructions: '使用Phone2Pad手机应用程序扫描二维码或手动输入IP和端口。<br> 确保两台设备连接到同一网络。',
     no_internet_instructions: '为了把手机和电脑连接起来，你需要一个稳定的互联网连接。',
     no_vigem_installed_instructions: '检测到缺少Vigem驱动，请在这个链接里下载并且安装。<br> https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe',
+    unknown_error_instructions: '发生未知错误。请尝试重新启动应用程序。如果问题仍然存在，请重新安装应用程序。',
   
     no_internet_connection: '没有互联网连接。',
     internet_connected: '互联网连接成功。',
@@ -56,10 +57,10 @@ export default {
     help_section_3_title: '主要功能',
     help_section_3_content: `
     <ul>
-        <li>手机变为电脑手柄，支持虚拟按键和实体手柄输入</li>
-        <li>自动识别已连接的实体手柄按键，并将操作发送至电脑</li>
-        <li>兼容 Xbox 360 与 DualShock 4 布局，支持自定义按键样式与布局</li>
-        <li>支持多部设备同时连接，游玩多人游戏</li>
+        <li>将手机用作电脑手柄，支持虚拟按键与实体手柄输入</li>
+        <li>可识别已连接的实体手柄按键，并同步传输至电脑</li>
+        <li>兼容 Xbox 360 和 DualShock 4 控制器布局，支持自定义按键样式与布局</li>
+        <li>支持多台移动设备同时连接，用于本地多人游戏</li>
     </ul>
     `,
     help_section_4_title: '手柄按键设置',
@@ -101,5 +102,9 @@ export default {
     mode_swipe: "滑动模式",
     mode_toggle: "开关模式",
     controller_customization_desc: "这是一个按键定制的演示。你可以在这里体验不同的按键行为，然后在手机端设置相同的操作模式。",
+
+    window_minimize: '最小化',
+    window_maximize: '最大化',
+    window_restore: '还原',
+    window_close: '关闭'
 }
-    

@@ -21,6 +21,8 @@ const sessionPort = ref("No internet connection");
 const qrCanvas = ref(null)
 
 const maxGamepads = ref(0);
+const serverStatus = ref('normal');
+const showDownloadButton = ref(false);
 
 interface GamepadSlot {
   clientId: number;
@@ -41,7 +43,7 @@ async function awakeCommunication() {
 }
 
 async function startCommunication() {
-  await window.api.start_wss(8080);
+  await window.api.start_wss(60001);
   const ipInfo = await window.api.get_server_ip();
 
   sessionIP.value = ipInfo.ips[0];
@@ -54,6 +56,23 @@ onMounted(async () => {
 
   maxGamepads.value = await window.api.getMaxGamepads();
   gamepadSlots.value = Array(maxGamepads.value).fill(null);
+
+  // Add server status listener
+  window.api.onServerStatus((_, data) => {
+    if (data.status === 'error') {
+      if (data.error === 'VIGEM_ERROR_BUS_NOT_FOUND') {
+        serverStatus.value = 'no_vigem';
+        showDownloadButton.value = true;
+      } else if (data.error === 'NO_NETWORK') {
+        serverStatus.value = 'no_network';
+      } else {
+        serverStatus.value = 'unknown_error';
+      }
+    } else if (data.status === 'started') {
+      serverStatus.value = 'normal';
+      showDownloadButton.value = false;
+    }
+  });
 
   QRCode.toCanvas(qrCanvas.value, 
     `{
@@ -140,17 +159,22 @@ const handleSponsorClick = () => {
               </el-button>
             </el-col>
             <el-col :span="12">
-              <el-button size="small" type="info" plain @click="handleLanguageClick">
-                <el-icon><Document /></el-icon>
-                {{ $t('button_language') }}
+              <el-button 
+                size="small" 
+                :type="showDownloadButton ? 'danger' : 'info'" 
+                plain 
+                @click="handleDownloadClick"
+              >
+                <el-icon><Download /></el-icon>
+                {{ $t('button_download') }}
               </el-button>
             </el-col>
           </el-row>
           <el-row :gutter="10" justify="center" style="margin-top: 10px;">
             <el-col :span="12">
-              <el-button size="small" type="info" plain @click="handleDownloadClick">
-                <el-icon><Download /></el-icon>
-                {{ $t('button_download') }}
+              <el-button size="small" type="info" plain @click="handleLanguageClick">
+                <el-icon><Document /></el-icon>
+                {{ $t('button_language') }}
               </el-button>
             </el-col>
             <el-col :span="12">
@@ -174,7 +198,22 @@ const handleSponsorClick = () => {
       <el-main class="white-bg main-content">
         <div class="controller-interface">
           <div class="controller-instructions"> 
-            <el-text style="font-size: 1.2rem;" type="warning" size="large" ><el-icon><InfoFilled /></el-icon> <span v-html="$t('use_instructions')"> </span></el-text>
+            <el-text 
+              style="font-size: 1.2rem;" 
+              :type="serverStatus === 'normal' ? 'warning' : 'danger'"
+              size="large"
+            >
+              <el-icon><InfoFilled /></el-icon> 
+              <span v-html="$t(
+                serverStatus === 'normal' 
+                  ? 'use_instructions' 
+                  : serverStatus === 'no_vigem'
+                    ? 'no_vigem_installed_instructions'
+                    : serverStatus === 'no_network'
+                      ? 'no_internet_instructions'
+                      : 'unknown_error_instructions'
+              )"> </span>
+            </el-text>
           </div>
 
           <div class="gamepadbox-container">
@@ -358,6 +397,29 @@ body {
   
   .action-buttons .el-button {
     font-size: 10px;
+  }
+}
+
+.el-text.el-text--danger {
+  color: #F56C6C;
+}
+.el-text.el-text--warning {
+  color: #E6A23C;
+}
+
+.el-button--danger.is-plain {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 </style>

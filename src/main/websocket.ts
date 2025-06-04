@@ -12,6 +12,7 @@ import {
 } from './gamepadFactory'
 import { GamepadData } from '../shared/types'
 import { GamepadType } from '../shared/enums'
+import { vigem_error } from './ffi'
 
 interface WebSocketMessage {
   action: 'handshake_ack' | 'register_ack' | 'delay_test_request' | 'delay_test_end' | 'error'
@@ -22,6 +23,8 @@ interface WebSocketMessage {
 interface ServerStatus {
   status: 'closed' | 'started' | 'error'
   message?: string
+  error?: string
+  shouldDownload?: boolean
 }
 
 type WebSocketGamepadPayload = {
@@ -43,7 +46,7 @@ type WebSocketPingPayload = {
 
 let wss: WebSocketServer | null = null
 let mainWindow: BrowserWindow | null = null
-let port: number = 8080 // Default port
+let port: number = 60001 // Default port
 
 interface ClientData {
   ip: string
@@ -93,8 +96,23 @@ function getLocalIpAddresses(): string[] {
   return results
 }
 
+function checkNetworkStatus(): boolean {
+  const addresses = getLocalIpAddresses()
+  return addresses.length > 0
+}
+
 function initWebSocketManager(window: BrowserWindow): void {
   mainWindow = window
+
+  // Check network status initially
+  const hasNetwork = checkNetworkStatus()
+  if (!hasNetwork) {
+    mainWindow?.webContents.send('server-status', {
+      status: 'error',
+      error: 'NO_NETWORK'
+    } as ServerStatus)
+    return
+  }
 
   ipcMain.on('wss:start', (_, portNumber) => {
     startServer(portNumber)
@@ -106,6 +124,17 @@ function initWebSocketManager(window: BrowserWindow): void {
 
   ipcMain.handle('wss:get_server_ip', () => {
     const ipAddresses = getLocalIpAddresses()
+    if (ipAddresses.length === 0) {
+      mainWindow?.webContents.send('server-status', {
+        status: 'error',
+        error: 'NO_NETWORK'
+      } as ServerStatus)
+      return {
+        ips: [],
+        port: port,
+        isRunning: false
+      }
+    }
     return {
       ips: ipAddresses,
       port: port,
@@ -120,73 +149,123 @@ function initWebSocketManager(window: BrowserWindow): void {
 }
 
 function startServer(portNumber?: number): void {
+  // Check network status before starting server
+  const hasNetwork = checkNetworkStatus()
+  if (!hasNetwork) {
+    mainWindow?.webContents.send('server-status', {
+      status: 'error',
+      error: 'NO_NETWORK'
+    } as ServerStatus)
+    return
+  }
+
   if (wss) {
     // Stop the existing server if it's already running
     stopServer()
   }
 
   port = portNumber ? portNumber : port
-  wss = new WebSocketServer({ port })
+  
+  const tryStartServer = (currentPort: number) => {
+    wss = new WebSocketServer({ port: currentPort })
 
-  wss.on('listening', () => {
-    mainWindow?.webContents.send('server-status', {
-      status: 'started',
-      port: port
-    })
-
-    initializeGamepadSystem()
-    console.log(`WebSocket server started on port ${port}`)
-  })
-
-  wss.on('error', (error) => {
-    mainWindow?.webContents.send('server-status', {
-      status: 'error',
-      error: error.message
-    } as ServerStatus)
-    console.error(`WebSocket server error: ${error.message}`)
-  })
-
-  wss.on('connection', (ws, req) => {
-    const clientIp = req.socket.remoteAddress
-    connections.add(ws)
-
-    mainWindow?.webContents.send('client-connected', {
-      ip: clientIp,
-      totalConnections: connections.size
-    })
-
-    console.log(`Client connected: ${clientIp}`)
-
-    ws.on('message', (message) => {
-      if (clientIp) {
-        handleWebSocketMessage(ws, message, clientIp)
+    wss.on('error', (error: any) => {
+      if (error.code === 'EADDRINUSE') {
+        console.log(`Port ${currentPort} is in use, trying ${currentPort + 1}`)
+        wss = null
+        tryStartServer(currentPort + 1)
       } else {
-        const response: WebSocketMessage = {
-          action: 'error',
+        mainWindow?.webContents.send('server-status', {
           status: 'error',
-          payload: 'Unknown client IP'
-        }
-        ws.send(encode(response))
+          error: error.message
+        } as ServerStatus)
+        console.error(`WebSocket server error: ${error.message}`)
       }
     })
 
-    ws.on('close', () => {
-      for (const [id, data] of clientMap.entries()) {
-        const _ws = data.websocket
-        if (_ws === ws) {
-          releaseGamepad(data.clientId)
-          mainWindow?.webContents.send('gamepad:disconnected', { id: data.clientId })
-          clientMap.delete(id)
-          connections.delete(ws)
-          console.log(`Client disconnected: ${clientIp}`)
-          break
-        }
-        else {
-          console.log(`Trying to disconnect client ${id} but not found`)
-        }
+    wss.on('listening', async () => {
+      port = currentPort
+      const error = await initializeGamepadSystem()
+
+      if (error === vigem_error.VIGEM_ERROR_NONE) {
+        console.log("LO");
+      } else {
+        console.log(error);
+        console.log(vigem_error.VIGEM_ERROR_NONE);
+
+
       }
+
+      if (error !== vigem_error.VIGEM_ERROR_NONE) {
+        if (error === vigem_error.VIGEM_ERROR_BUS_NOT_FOUND) {
+          mainWindow?.webContents.send('server-status', {
+            status: 'error',
+            error: 'VIGEM_ERROR_BUS_NOT_FOUND',
+            shouldDownload: true
+          } as ServerStatus)
+        } else {
+          mainWindow?.webContents.send('server-status', {
+            status: 'error',
+            error: 'Unknown'
+          } as ServerStatus)
+        }
+
+
+        return
+      }
+
+      mainWindow?.webContents.send('server-status', {
+        status: 'started',
+        port: port
+      })
+      
+      console.log(`WebSocket server started on port ${port}`)
     })
-  })
+
+    wss.on('connection', (ws, req) => {
+      const clientIp = req.socket.remoteAddress
+      connections.add(ws)
+
+      mainWindow?.webContents.send('client-connected', {
+        ip: clientIp,
+        totalConnections: connections.size
+      })
+
+      console.log(`Client connected: ${clientIp}`)
+
+      ws.on('message', (message) => {
+        if (clientIp) {
+          handleWebSocketMessage(ws, message, clientIp)
+        } else {
+          const response: WebSocketMessage = {
+            action: 'error',
+            status: 'error',
+            payload: 'Unknown client IP'
+          }
+          ws.send(encode(response))
+        }
+      })
+
+      ws.on('close', () => {
+        for (const [id, data] of clientMap.entries()) {
+          const _ws = data.websocket
+          if (_ws === ws) {
+            releaseGamepad(data.clientId)
+            mainWindow?.webContents.send('gamepad:disconnected', { id: data.clientId })
+            clientMap.delete(id)
+            connections.delete(ws)
+            console.log(`Client disconnected: ${clientIp}`)
+            break
+          }
+          else {
+            console.log(`Trying to disconnect client ${id} but not found`)
+          }
+        }
+      })
+    })
+  }
+
+  tryStartServer(port)
 }
 
 function stopServer() {

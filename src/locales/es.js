@@ -2,6 +2,7 @@ export default {
     use_instructions: 'Usa la aplicación móvil Phone2Pad para escanear el código QR o ingresa manualmente la IP y el puerto.<br> Asegúrate de que ambos dispositivos estén conectados a la misma red.',
     no_internet_instructions: 'Para conectar tu teléfono y computadora, necesitas una conexión a internet estable.',
     no_vigem_installed_instructions: 'No se detectó el controlador ViGEm. Por favor, descárgalo e instálalo desde este enlace:<br> https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe',
+    unknown_error_instructions: 'Se ha producido un error desconocido. Por favor, intenta reiniciar la aplicación. Si el problema persiste, por favor reinstala la aplicación.',
   
     no_internet_connection: 'Sin conexión a internet.',
     internet_connected: 'Conectado en internet.',
@@ -87,5 +88,10 @@ export default {
     help_section_4_title: 'Personalización de Botones',
     help_video_url: 'https://youtu.be/xxx',
     help_video_text: 'Ver Tutorial',
+
+    window_minimize: 'Minimizar',
+    window_maximize: 'Maximizar',
+    window_restore: 'Restaurar',
+    window_close: 'Cerrar'
 }
   

@@ -28,6 +28,7 @@ declare global {
       stop_wss: () => Promise<void>
       onGamepadRegistered: (callback: (event: Event, data: { clientId: number, gamepadType: string }) => void) => void
       onGamepadDisconnected: (callback: (event: Event, data: { id: number }) => void) => void
+      onServerStatus: (callback: (event: Event, data: { status: string, error?: string }) => void) => void
 
       onXboxInput: (callback: (event: Event, data: { id: number, gamepadData: GamepadData }) => void) => void 
       onDualShockInput: (callback: (event: Event, data: { id: number, gamepadData: GamepadData }) => void) => void

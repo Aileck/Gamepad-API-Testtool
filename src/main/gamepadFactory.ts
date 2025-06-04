@@ -1,11 +1,11 @@
-import { system, xbox, dualshock4 } from './ffi';
+import { system, xbox, dualshock4, vigem_error } from './ffi';
 import { GamepadType } from '../shared/enums'
 import { GamepadData } from '../shared/types'
 
-async function initializeGamepadSystem(): Promise<any> {
+async function initializeGamepadSystem(): Promise<vigem_error> {
     const result = await system.initialize();
 
-    return result;
+    return result.error;
 }
 
 async function createGamepad(type: GamepadType): Promise<number> {

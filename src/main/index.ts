@@ -7,7 +7,7 @@ import { initWebSocketManager } from './websocket'
 import { GamepadType } from '../shared/enums'
 
 import icon from '../../resources/icon.png?asset'
-import { system } from './ffi';
+import { system, vigem_error } from './ffi';
 
 import { initializeGamepadSystem, createGamepad } from './gamepadFactory'
 
@@ -30,6 +30,8 @@ function createWindow(): void {
     resizable: true,
     closable: true,
     focusable: true,
+    autoHideMenuBar: true,
+    frame: true,
 
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -37,6 +39,9 @@ function createWindow(): void {
       sandbox: false
     }
   })
+
+  // Remove the menu bar completely
+  mainWindow.setMenu(null)
 
   mainWindow.on('ready-to-show', () => {
     mainWindow?.show()
