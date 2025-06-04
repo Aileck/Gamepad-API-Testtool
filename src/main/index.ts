@@ -49,6 +49,7 @@ function createWindow(): void {
     focusable: true,
     autoHideMenuBar: true,
     frame: true,
+    title: 'Phone2Pad Desktop Preview',
 
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {

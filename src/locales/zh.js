@@ -1,4 +1,5 @@
 export default {
+    preview_version: '预览版',
     loading_instructions: '正在初始化系统，请稍候...',
     use_instructions: '使用Phone2Pad手机应用程序扫描二维码或手动输入IP和端口。<br> 确保两台设备连接到同一网络。',
     no_internet_instructions: '为了把手机和电脑连接起来，你需要一个稳定的互联网连接。',
@@ -82,15 +83,9 @@ export default {
 
       <p>欢迎通过右侧联系方式反馈你的使用体验，无论是优点还是不足，都是我改进和坚持的动力。</p>
     `,
-    sponsor_contact_content: `
-      <div class="contact-email">aileck.developer@gmail.com</div>
-      <a href="mailto:aileck.developer@gmail.com">
-        <span>发送邮件</span>
-      </a>
-      <a href="https://space.bilibili.com/2459782" target="_blank">
-        <span>Bilibili私信我</span>
-      </a>
-    `,
+    sponsor_bilibili_link: 'https://space.bilibili.com/2459782',
+    send_email: '发送邮件',
+    bilibili_message: 'Bilibili私信我',
     sponsor_kofi: '通过Ko-fi赞助',
     sponsor_wechat: '微信赞助',
     sponsor_button_text: '打开支付宝',

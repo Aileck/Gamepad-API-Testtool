@@ -9,6 +9,7 @@ import kofiButton from '../../../../assets/sprites/support_me_on_kofi_dark.png'
 
 const { t } = useI18n()
 const dialogVisible = ref(false)
+const CONTACT_EMAIL = 'aileck.developer@gmail.com'
 
 const openKofi = () => {
   window.open('https://ko-fi.com/aileck', '_blank')
@@ -64,7 +65,15 @@ defineExpose({
         
         <div class="sidebar-section contact-info">
           <h3>{{ t('sponsor_contact_title') }}</h3>
-          <div class="contact-links" v-html="t('sponsor_contact_content')"></div>
+          <div class="contact-links">
+            <div class="contact-email">{{ CONTACT_EMAIL }}</div>
+            <a :href="`mailto:${CONTACT_EMAIL}`">
+              <span>{{ t('send_email') }}</span>
+            </a>
+            <a v-if="$i18n.locale === 'zh'" :href="t('sponsor_bilibili_link')" target="_blank">
+              <span>{{ t('bilibili_message') }}</span>
+            </a>
+          </div>
         </div>
       </div>
 

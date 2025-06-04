@@ -231,7 +231,7 @@ const handleSponsorClick = () => {
     <el-container>
       <el-header class="dark-gray-bg header-container">
         <div>
-          <h2>Phone2Pad Desktop - Beta</h2>
+          <h2>Phone2Pad Desktop - {{ $t('preview_version') }}</h2>
         </div>
       </el-header>
 

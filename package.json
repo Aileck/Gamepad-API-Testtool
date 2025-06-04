@@ -57,6 +57,11 @@
     "win": {
       "target": "nsis"
     },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "include": "installer.nsh"
+    },
     "directories": {
       "buildResources": "resources",
       "output": "dist_electron"

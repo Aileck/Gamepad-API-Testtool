@@ -1,4 +1,5 @@
 export default {
+    preview_version: 'Versión Preliminar',
     loading_instructions: 'Inicializando sistema, por favor espere...',
     use_instructions: 'Usa la aplicación móvil Phone2Pad para escanear el código QR o ingresa manualmente la IP y el puerto.<br> Asegúrate de que ambos dispositivos estén conectados a la misma red.',
     no_internet_instructions: 'Para conectar tu teléfono y computadora, necesitas una conexión a internet estable.',
@@ -50,12 +51,8 @@ export default {
 
       <p>No dudes en usar los métodos de contacto a la derecha para contarme que estás usando la app, compartir lo que te gusta o no, ¡y ayudarme a saber que estoy haciendo algo significativo!</p>
     `,
-    sponsor_contact_content: `
-      <div class="contact-email">aileck.developer@gmail.com</div>
-      <a href="mailto:aileck.developer@gmail.com">
-        <span>Enviar Correo</span>
-      </a>
-    `,
+    sponsor_bilibili_link: 'https://space.bilibili.com/2459782',
+    send_email: 'Enviar Correo',
     sponsor_kofi: 'Apoyar en Ko-fi',
     sponsor_wechat: 'Apoyar por WeChat',
     help_title: 'Ayuda',
