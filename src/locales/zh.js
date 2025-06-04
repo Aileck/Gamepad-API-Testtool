@@ -109,5 +109,7 @@ export default {
     window_close_confirm_message: '关闭电脑端后手机将无法继续使用，是否最小化到系统托盘？',
     window_close_confirm_minimize: '最小化',
     window_close_confirm_exit: '退出程序',
-    window_close_confirm_cancel: '取消'
+    window_close_confirm_cancel: '取消',
+
+    connected_devices: '已连接设备'
 }

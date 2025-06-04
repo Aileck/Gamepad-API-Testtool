@@ -99,6 +99,8 @@ export default {
     window_close_confirm_message: 'Después de cerrar la aplicación de escritorio, la aplicación móvil dejará de funcionar. ¿Desea minimizar a la bandeja del sistema?',
     window_close_confirm_minimize: 'Minimizar',
     window_close_confirm_exit: 'Salir',
-    window_close_confirm_cancel: 'Cancelar'
+    window_close_confirm_cancel: 'Cancelar',
+
+    connected_devices: 'Dispositivos conectados'
 }
   

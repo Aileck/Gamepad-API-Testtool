@@ -5,7 +5,7 @@ import '../../../node_modules/element-plus/dist/index.css'
 import { ElContainer, ElHeader, ElMain, ElAside, ElSpace, ElButton, ElRow, ElCol, ElIcon, ElScrollbar, ElText } from 'element-plus'
 import { InfoFilled, QuestionFilled, Document, Download, Star } from '@element-plus/icons-vue'
 
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import QRCode from 'qrcode'
@@ -42,7 +42,10 @@ const closeConfirmModalRef = ref()
 
 const { locale } = useI18n();
 
-// 添加窗口关闭事件监听
+const connectedDevicesCount = computed(() => {
+  return gamepadSlots.value.filter(slot => slot !== null).length;
+});
+
 window.api.onWindowCloseRequest(() => {
   console.log('Received close request')
   closeConfirmModalRef.value?.show()
@@ -61,7 +64,6 @@ async function startCommunication() {
 }
 
 onMounted(async () => {
-  // 先设置事件监听器
   window.api.onServerStatus((_, data) => {
     console.log('Received server status:', data);
     if (data.status === 'error') {
@@ -84,14 +86,8 @@ onMounted(async () => {
     console.log('Current serverStatus:', serverStatus.value);
   });
 
-  // 然后再初始化通信
   await awakeCommunication();
   await startCommunication();
-
-  // 添加调试日志
-  console.log('Current locale:', locale.value);
-  console.log('Saved language:', localStorage.getItem('preferred_language'));
-  console.log('Current serverStatus:', serverStatus.value);
 
   maxGamepads.value = await window.api.getMaxGamepads();
   gamepadSlots.value = Array(maxGamepads.value).fill(null);
@@ -255,6 +251,11 @@ const handleSponsorClick = () => {
                         ? 'no_internet_instructions'
                         : 'unknown_error_instructions'
               )"> </span>
+              <div v-if="serverStatus === 'normal'" class="connected-devices-info">
+                <el-text style="font-size: 0.9rem;" type="info">
+                  {{ $t('connected_devices') }}: {{ connectedDevicesCount }}/{{ maxGamepads }}
+                </el-text>
+              </div>
             </el-text>
           </div>
 
@@ -391,6 +392,7 @@ body {
 .controller-instructions {
   font-size: 1.5rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: start;
   gap: 8px;
@@ -464,5 +466,10 @@ body {
   100% {
     transform: scale(1);
   }
+}
+
+.connected-devices-info {
+  margin-top: 5px;
+  text-align: center;
 }
 </style>

@@ -13,6 +13,7 @@ import {
 import { GamepadData } from '../shared/types'
 import { GamepadType } from '../shared/enums'
 import { vigem_error } from './ffi'
+import { getMaxConnections } from './index'
 
 interface WebSocketMessage {
   action: 'handshake_ack' | 'register_ack' | 'delay_test_request' | 'delay_test_end' | 'error'
@@ -333,6 +334,18 @@ async function handleWebSocketMessage(ws: WebSocket, message: any, clientIp: str
   }
 
   async function handleHandshake(ws: WebSocket, clientIp: string): Promise<void> {
+    if (connections.size >= getMaxConnections()) {
+      const response: WebSocketMessage = {
+        action: 'handshake_ack',
+        status: 'error',
+        payload: 'E_MAX_CONN'
+      }
+      
+      ws.send(encode(response))
+      ws.close()
+      return;
+    }
+
     const response: WebSocketMessage = {
       action: 'handshake_ack',
       status: 'ok',

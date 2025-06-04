@@ -108,5 +108,7 @@ export default {
   window_close_confirm_message: 'After closing the desktop app, the mobile app will stop working. Do you want to minimize to system tray?',
   window_close_confirm_minimize: 'Minimize',
   window_close_confirm_exit: 'Exit',
-  window_close_confirm_cancel: 'Cancel'
+  window_close_confirm_cancel: 'Cancel',
+
+  connected_devices: 'Connected devices'
 }

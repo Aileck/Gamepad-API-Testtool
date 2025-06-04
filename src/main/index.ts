@@ -28,6 +28,10 @@ import { getClientMap } from './websocket'
 
 const MAX_GAMEPADS = 4;
 
+export function getMaxConnections(): number {
+  return MAX_GAMEPADS;
+}
+
 type Payload ={
   content: number | string;
   error: string;

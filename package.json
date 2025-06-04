@@ -17,6 +17,7 @@
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "npm run build && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win",
+    "build:multilang": "node scripts/build-multilang.js",
     "reset": "node scripts/reset-preferences.js"
   },
   "dependencies": {
@@ -52,7 +53,7 @@
     "vue-tsc": "^2.2.8"
   },
   "build": {
-    "appId": "com.aileck.phone2pad-desktop-preview-version",
+    "appId": "com.aileck.phone2pad-desktop",
     "productName": "Phone2Pad Desktop Preview",
     "win": {
       "target": "nsis"
