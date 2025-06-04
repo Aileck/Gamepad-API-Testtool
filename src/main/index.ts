@@ -1,15 +1,30 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+    }
+  })
+}
 
 import { initWebSocketManager } from './websocket'
 
 import { GamepadType } from '../shared/enums'
 
 import icon from '../../resources/icon.png?asset'
-import { system, vigem_error } from './ffi';
+import { system } from './ffi';
 
 import { initializeGamepadSystem, createGamepad } from './gamepadFactory'
+import { getClientMap } from './websocket'
+
 
 const MAX_GAMEPADS = 4;
 
@@ -19,6 +34,8 @@ type Payload ={
 }
 
 let mainWindow : BrowserWindow | null = null;
+let hasAskedToClose = false;
+
 function createWindow(): void {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -47,6 +64,17 @@ function createWindow(): void {
     mainWindow?.show()
   })
 
+  mainWindow.on('close', (e) => {
+    const clientMap = getClientMap()
+    console.log(clientMap.size);
+    
+    // 无论有没有客户端连接，都显示确认对话框
+    if (!hasAskedToClose) {
+      e.preventDefault()
+      mainWindow?.webContents.send('window:close-request')
+    }
+  })
+
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
@@ -73,6 +101,19 @@ app.whenReady().then(() => {
   // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
+  })
+
+  // 添加窗口关闭确认和最小化的事件处理
+  ipcMain.on('window:close-confirm', (_, shouldClose) => {
+    if (shouldClose) {
+      hasAskedToClose = true
+      mainWindow?.close()
+    }
+  })
+
+  ipcMain.on('window:minimize', () => {
+    mainWindow?.minimize()
+    hasAskedToClose = false
   })
 
   // IPC test

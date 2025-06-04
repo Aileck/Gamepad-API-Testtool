@@ -15,6 +15,12 @@ const api = {
   start_wss: (port: number) => ipcRenderer.send('wss:start', port),
   stop_wss: () => ipcRenderer.send('wss:stop'),
 
+  onWindowCloseRequest: (callback: (event: Electron.IpcRendererEvent) => void) => 
+    ipcRenderer.on('window:close-request', callback),
+  
+  confirmWindowClose: (shouldClose: boolean) => ipcRenderer.send('window:close-confirm', shouldClose),
+  minimizeWindow: () => ipcRenderer.send('window:minimize'),
+
   write_to_log: (callback: (event: Electron.IpcRendererEvent, message: string) => void) => 
     ipcRenderer.on('write-log', callback),
     

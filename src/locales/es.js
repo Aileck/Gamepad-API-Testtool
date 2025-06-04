@@ -55,6 +55,8 @@ export default {
         <span>Enviar Correo</span>
       </a>
     `,
+    sponsor_kofi: 'Apoyar en Ko-fi',
+    sponsor_wechat: 'Apoyar por WeChat',
     help_title: 'Ayuda',
     help_warning: '⚠️ Esta es una versión preliminar. Puede haber riesgos de fallos y pérdida de datos en futuras actualizaciones.',
     help_video_placeholder: 'Video tutorial próximamente',
@@ -92,6 +94,13 @@ export default {
     window_minimize: 'Minimizar',
     window_maximize: 'Maximizar',
     window_restore: 'Restaurar',
-    window_close: 'Cerrar'
+    window_close: 'Cerrar',
+
+    // Añadir traducciones para el diálogo de confirmación de cierre
+    window_close_confirm_title: 'Confirmar Acción',
+    window_close_confirm_message: 'Después de cerrar la aplicación de escritorio, la aplicación móvil dejará de funcionar. ¿Desea minimizar a la bandeja del sistema?',
+    window_close_confirm_minimize: 'Minimizar',
+    window_close_confirm_exit: 'Salir',
+    window_close_confirm_cancel: 'Cancelar'
 }
   

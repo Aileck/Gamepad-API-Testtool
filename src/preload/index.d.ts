@@ -26,6 +26,11 @@ declare global {
       write_to_log: (callback: (event: Event, message: string) => void) => void
       start_wss: (port: number) => Promise<void>
       stop_wss: () => Promise<void>
+
+      onWindowCloseRequest: (callback: (event: Event) => void) => void
+      confirmWindowClose: (shouldClose: boolean) => void
+      minimizeWindow: () => void
+
       onGamepadRegistered: (callback: (event: Event, data: { clientId: number, gamepadType: string }) => void) => void
       onGamepadDisconnected: (callback: (event: Event, data: { id: number }) => void) => void
       onServerStatus: (callback: (event: Event, data: { status: string, error?: string }) => void) => void

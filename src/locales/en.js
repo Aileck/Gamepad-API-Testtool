@@ -89,6 +89,8 @@ export default {
       <span>Send Email</span>
     </a>
   `,
+  sponsor_kofi: 'Support on Ko-fi',
+  sponsor_wechat: 'Support via WeChat',
   controller_customization: "Controller Customization",
   xbox_layout: "Xbox Layout",
   dualshock_layout: "DualShock Layout",
@@ -101,5 +103,12 @@ export default {
   window_minimize: 'Minimize',
   window_maximize: 'Maximize',
   window_restore: 'Restore',
-  window_close: 'Close'
+  window_close: 'Close',
+
+  // Add close confirmation dialog translations
+  window_close_confirm_title: 'Confirm Action',
+  window_close_confirm_message: 'After closing the desktop app, the mobile app will stop working. Do you want to minimize to system tray?',
+  window_close_confirm_minimize: 'Minimize',
+  window_close_confirm_exit: 'Exit',
+  window_close_confirm_cancel: 'Cancel'
 }

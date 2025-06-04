@@ -90,7 +90,8 @@ export default {
         <span>Bilibili私信我</span>
       </a>
     `,
-    sponsor_wechat: '微信支付',
+    sponsor_kofi: '通过Ko-fi赞助',
+    sponsor_wechat: '微信赞助',
     sponsor_button_text: '打开支付宝',
     help_video_url: 'https://www.bilibili.com/video/xxx',
     help_video_text: '观看教程视频',
@@ -106,5 +107,11 @@ export default {
     window_minimize: '最小化',
     window_maximize: '最大化',
     window_restore: '还原',
-    window_close: '关闭'
+    window_close: '关闭',
+
+    window_close_confirm_title: '确认操作',
+    window_close_confirm_message: '关闭电脑端后手机将无法继续使用，是否最小化到系统托盘？',
+    window_close_confirm_minimize: '最小化',
+    window_close_confirm_exit: '退出程序',
+    window_close_confirm_cancel: '取消'
 }

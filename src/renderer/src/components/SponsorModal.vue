@@ -36,24 +36,29 @@ defineExpose({
         <div class="sidebar-section support-methods">
           <h3>{{ t('sponsor_support_title') }}</h3>
           <div class="support-buttons">
-            <el-button 
-              type="primary" 
-              class="support-button kofi-button"
-              @click="openKofi"
-            >
-              <img :src="kofiButton" alt="Support me on Ko-fi" />
-            </el-button>
-            <div class="qr-wrapper">
-              <el-image 
-                :src="wechatQR" 
-                fit="contain"
-                :preview-src-list="[wechatQR]"
+            <div class="support-item">
+              <div class="support-label">{{ t('sponsor_kofi') }}</div>
+              <el-button 
+                type="primary" 
+                class="support-button kofi-button"
+                @click="openKofi"
               >
-                <template #placeholder>
-                  <div class="image-placeholder">Loading...</div>
-                </template>
-              </el-image>
-              <div class="qr-label">{{ t('sponsor_wechat') }}</div>
+                <img :src="kofiButton" alt="Support me on Ko-fi" />
+              </el-button>
+            </div>
+            <div class="support-item">
+              <div class="support-label">{{ t('sponsor_wechat') }}</div>
+              <div class="qr-wrapper">
+                <el-image 
+                  :src="wechatQR" 
+                  fit="contain"
+                  :preview-src-list="[wechatQR]"
+                >
+                  <template #placeholder>
+                    <div class="image-placeholder">Loading...</div>
+                  </template>
+                </el-image>
+              </div>
             </div>
           </div>
         </div>
@@ -106,6 +111,19 @@ defineExpose({
   flex-direction: column;
   gap: 20px;
   align-items: center;
+}
+
+.support-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.support-label {
+  color: var(--el-text-color-regular);
+  font-size: 14px;
+  margin-bottom: 4px;
 }
 
 .support-button {

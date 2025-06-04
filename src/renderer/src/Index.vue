@@ -15,6 +15,7 @@ import LanguageModal from './components/LanguageModal.vue'
 import DownloadModal from './components/DownloadModal.vue'
 import HelpModal from './components/HelpModal.vue'
 import SponsorModal from './components/SponsorModal.vue'
+import CloseConfirmModal from './components/CloseConfirmModal.vue'
 
 const sessionIP = ref("No internet connection");
 const sessionPort = ref("No internet connection");
@@ -23,6 +24,8 @@ const qrCanvas = ref(null)
 const maxGamepads = ref(0);
 const serverStatus = ref('normal');
 const showDownloadButton = ref(false);
+const isFirstHelpClick = ref(localStorage.getItem('help_clicked') !== 'true');
+const isFirstSponsorClick = ref(localStorage.getItem('sponsor_clicked') !== 'true');
 
 interface GamepadSlot {
   clientId: number;
@@ -35,8 +38,15 @@ const languageModalRef = ref()
 const downloadModalRef = ref()
 const helpModalRef = ref()
 const sponsorModalRef = ref()
+const closeConfirmModalRef = ref()
 
 const { locale } = useI18n();
+
+// 添加窗口关闭事件监听
+window.api.onWindowCloseRequest(() => {
+  console.log('Received close request')
+  closeConfirmModalRef.value?.show()
+})
 
 async function awakeCommunication() {
   await window.api.awake_wss();
@@ -122,10 +132,18 @@ const handleDownloadClick = () => {
 
 const handleHelpClick = () => {
   helpModalRef.value?.showDialog()
+  if (isFirstHelpClick.value) {
+    localStorage.setItem('help_clicked', 'true')
+    isFirstHelpClick.value = false
+  }
 }
 
 const handleSponsorClick = () => {
   sponsorModalRef.value?.showDialog()
+  if (isFirstSponsorClick.value) {
+    localStorage.setItem('sponsor_clicked', 'true')
+    isFirstSponsorClick.value = false
+  }
 }
 </script>
 
@@ -153,9 +171,9 @@ const handleSponsorClick = () => {
         <div class="action-buttons">
           <el-row :gutter="10" justify="center">
             <el-col :span="12">
-              <el-button size="small" type="info" plain @click="handleHelpClick">
-                <el-icon><QuestionFilled /></el-icon>
-                {{ $t('button_help') }}
+              <el-button size="small" type="info" plain @click="handleLanguageClick">
+                <el-icon><Document /></el-icon>
+                {{ $t('button_language') }}
               </el-button>
             </el-col>
             <el-col :span="12">
@@ -172,13 +190,23 @@ const handleSponsorClick = () => {
           </el-row>
           <el-row :gutter="10" justify="center" style="margin-top: 10px;">
             <el-col :span="12">
-              <el-button size="small" type="info" plain @click="handleLanguageClick">
-                <el-icon><Document /></el-icon>
-                {{ $t('button_language') }}
+              <el-button 
+                size="small" 
+                :type="isFirstHelpClick ? 'warning' : 'info'" 
+                plain 
+                @click="handleHelpClick"
+              >
+                <el-icon><QuestionFilled /></el-icon>
+                {{ $t('button_help') }}
               </el-button>
             </el-col>
             <el-col :span="12">
-              <el-button size="small" type="info" plain @click="handleSponsorClick">
+              <el-button 
+                size="small" 
+                :type="isFirstSponsorClick ? 'warning' : 'info'" 
+                plain 
+                @click="handleSponsorClick"
+              >
                 <el-icon><Star /></el-icon>
                 {{ $t('button_sponsor') }}
               </el-button>
@@ -246,6 +274,7 @@ const handleSponsorClick = () => {
   <DownloadModal ref="downloadModalRef" />
   <HelpModal ref="helpModalRef" />
   <SponsorModal ref="sponsorModalRef" />
+  <CloseConfirmModal ref="closeConfirmModalRef" />
 </template>
 
 <style>
