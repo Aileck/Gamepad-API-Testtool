@@ -80,22 +80,25 @@ function newClientData(ip: string, websocket: WebSocket, clientId: number): Clie
 }
 
 function getLocalIpAddresses(): string[] {
-  const nets = networkInterfaces()
-  const results: string[] = []
+  const nets = networkInterfaces();
+  const results: string[] = [];
 
   for (const name of Object.keys(nets)) {
-    const interfaces = nets[name]
-    if (!interfaces) continue
+    // Filter out common virtual interfaces
+    if (/(docker|lo|veth|br-|virbr|vmware|vmnet|tun|tap|vethernet)/i.test(name)) {
+      continue;
+    }
+    const interfaces = nets[name];
+    if (!interfaces) continue;
 
     for (const net of interfaces) {
       if (net.family === 'IPv4' && !net.internal) {
-        results.push(net.address)
+        results.push(net.address);
       }
     }
   }
-  return results
+  return results;
 }
-
 function checkNetworkStatus(): boolean {
   const addresses = getLocalIpAddresses()
   return addresses.length > 0
