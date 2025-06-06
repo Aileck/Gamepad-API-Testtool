@@ -1,10 +1,10 @@
 export default {
   preview_version: 'Preview Version',
-  loading_instructions: 'Initializing system, please wait...',
+  loading_instructions: 'Initializing system, please wait... If this message keeps showing, please check your network connection and restart the program.',
   use_instructions: 'Use the Phone2Pad mobile app to scan the QR code or manually enter the IP and port.<br> Make sure both devices are connected to the same network.',
-  no_internet_instructions: 'To connect your phone and computer, you need a stable internet connection.',
-  no_vigem_installed_instructions: 'ViGEm driver is missing. Please download and install it from the left bar, then restart the application.',
-  unknown_error_instructions: 'An unknown error occurred. Please try restarting the application. If the problem persists, please reinstall the application.',
+  no_internet_instructions: 'No internet connection. Please check your network and restart the program.',
+  no_vigem_installed_instructions: 'ViGEm driver is missing. Please click the download button on the left to install it, then restart the program.',
+  unknown_error_instructions: 'An unknown error occurred. Please try restarting the app. If the problem persists, reinstall the application.',
 
   no_internet_connection: 'No internet connection.',
   internet_connected: 'Internet connection successful.',
@@ -24,91 +24,94 @@ export default {
   language_modal_zh: 'Chinese',
   language_modal_es: 'Spanish',
 
-  download_title: 'Downloads',
+  download_title: 'Download',
   download_mobile_title: 'Phone2Pad Mobile App',
-  download_mobile_description: 'Scan QR code or manually enter IP and port to use your phone as a gamepad',
+  download_mobile_description: 'Scan the QR code or manually enter the IP and port to capture gamepad input or simulate input from your phone.',
   download_vigem_title: 'Phone2Pad Windows Driver',
-  download_vigem_description: 'Install ViGEm driver to enable gamepad emulation',
-  download_on_itch_io: 'Download on itch.io',
-  download_on_github: 'Download on GitHub',
-  download_on_baidu: 'Download on Baidu',
-  download_contact_info: 'If any download links are not working, please contact Aileck on ',
+  download_vigem_description: 'Install the ViGEm driver to enable gamepad emulation functionality.',
+
+  download_on_itch_io: 'Download from itch.io',
+  download_on_github: 'Download from GitHub',
+  download_on_baidu: 'Download from Baidu Netdisk',
+  download_contact_info: 'If the download links don’t work, contact Aileck on Bilibili:',
 
   help_title: 'Help',
-  help_warning: '⚠️ This is a preview version. There might be risks of crashes and data loss in future updates.',
-  help_video_placeholder: 'Tutorial video coming soon',
+  help_warning: '⚠️ This is a preview version. It may crash and future updates could result in data loss.',
   help_section_1_title: 'Getting Started',
+  help_section_main_description: "Phone2Pad is an app designed for <span style='color: #e6a23c;'>Android phones and handhelds</span>. It recognizes external gamepad input and maps it to PC controls.<br><br>It consists of two parts: a <span style='color: #e6a23c;'>mobile app</span> and a <span style='color: #e6a23c;'>desktop version</span> that must be <span style='color: #e6a23c;'>run simultaneously</span> for full functionality.<br><br>You can use <span style='color: #e6a23c;'>virtual buttons</span> on your phone or connect a <span style='color: #e6a23c;'>physical controller</span> to send input to your PC.<br><br><span style='color: #e6a23c;'>Supports Xbox 360 and DualShock 4 layouts</span>.",
   help_section_1_content: `
     <ul>
-      <li>Install Phone2Pad mobile app on your phone</li>
-      <li>Install ViGEm driver on your PC</li>
-      <li>Make sure both devices are on the same network</li>
-      <li>Scan QR code or manually enter the IP and port shown on desktop app</li>
+      <li>Install the Phone2Pad mobile app on your phone</li>
+      <li>Install the ViGEm driver on your PC</li>
+      <li>Both downloads are available in the left sidebar of the app</li>
+      <li>Ensure your phone and PC are on the same network</li>
+      <li>Scan the QR code or manually enter the IP and port shown on the desktop</li>
+      <li>Enjoy your game :)</li>
     </ul>
   `,
   help_section_2_title: 'Troubleshooting',
   help_section_2_content: `
     <ul>
-      <li>Ensure devices are on the same network</li>
-      <li>Check if ViGEm driver is properly installed</li>
-      <li>Try restarting both mobile and desktop apps</li>
-      <li>Make sure firewall is not blocking the connection</li>
+      <li>Make sure both devices are on the same network</li>
+      <li>Check if ViGEm is installed properly</li>
+      <li>Ensure your firewall isn’t blocking the connection</li>
+      <li>Try restarting both the mobile and desktop apps</li>
     </ul>
   `,
-  help_section_3_title: 'Main Features',
+  help_section_3_title: 'Key Features',
   help_section_3_content: `
   <ul>
-    <li>Use your phone as a PC game controller, supporting both virtual buttons and physical gamepads</li>
-    <li>Automatically detects connected physical controllers and transmits input to the computer</li>
-    <li>Compatible with Xbox 360 and DualShock 4 layouts, with support for custom button styles and layouts</li>
-    <li>Supports simultaneous connection of multiple mobile devices for local multiplayer gaming</li>
+      <li>Use your phone as a PC gamepad, with virtual buttons or a physical controller</li>
+      <li>Supports Xbox 360 and DualShock 4 layouts, customizable button styles and layouts</li>
+      <li>Supports multiple mobile devices for local multiplayer</li>
   </ul>
   `,
+  help_disclaimer: "*Mentions of Xbox, DualShock, etc. are for compatibility reference only and do not imply any affiliation.",
   help_section_4_title: 'Controller Customization',
-  help_video_url: 'https://youtu.be/xxx',
-  help_video_text: 'Watch Tutorial',
-
   sponsor_title: 'Support the Project',
-  sponsor_support_title: 'Support Methods',
-  sponsor_contact_title: 'Contact Me',
+  sponsor_support_title: 'Sponsorship Options',
+  sponsor_contact_title: 'Contact Info',
   sponsor_main_content: `
-    <p>Thank you for using Phone2Pad!</p>
-    <p>This app is completely free, but development and maintenance take time and effort. If it has helped you, please consider using the <strong>support methods on the right</strong> to help me keep improving it!</p>
+    <p>Thanks for using Phone2Pad!</p>
+    <p>This app is completely free, but development and maintenance take a lot of time and effort. If it’s useful to you, please consider <strong>sponsoring via the options on the right</strong> to keep it going!</p>
     
-    <p>Future Plans (within my capabilities):</p>
+    <p>Planned features (as far as I can manage):</p>
     <ul>
       <li>Add gyroscope and vibration feedback</li>
-      <li>Support custom buttons and touchbar</li>
-      <li>Develop auto-connect and Bluetooth support</li>
-      <li>Support iOS, Linux handhelds, and PSVita (with your support, as I currently can't afford these devices 😵)</li>
+      <li>Support customizable keys and touchpad</li>
+      <li>Implement auto-detection and Bluetooth connection</li>
+      <li>Support for iOS, Linux handhelds, and PS Vita (if I can afford the devices 😵)</li>
     </ul>
 
-    <p>Feel free to use the contact methods on the right to let me know you're using the app, share what you like or dislike, and help me know I'm making something meaningful!</p>
+    <p>Feel free to send feedback via the contact options—whether it’s praise or critique, it helps me improve and stay motivated.</p>
   `,
   sponsor_bilibili_link: 'https://space.bilibili.com/2459782',
   send_email: 'Send Email',
-  sponsor_kofi: 'Support on Ko-fi',
-  sponsor_wechat: 'Support via WeChat',
+  bilibili_message: 'Message me on Bilibili',
+  sponsor_kofi: 'Sponsor via Ko-fi',
+  sponsor_wechat: 'Sponsor via WeChat',
+  sponsor_button_text: 'Open Alipay',
+  help_video_url: 'https://www.bilibili.com/video/xxx',
+  help_video_text: 'Watch Tutorial Video',
   controller_customization: "Controller Customization",
   xbox_layout: "Xbox Layout",
   dualshock_layout: "DualShock Layout",
   button_pressed: "Pressed",
   mode_default: "Default Mode",
-  mode_swipe: "Swipe Mode",
-  mode_toggle: "Toggle Mode",
-  controller_customization_desc: "This is a button customization demo. You can try different button behaviors here and then apply the same settings on your mobile app.",
+  mode_swipe: "Swipe Trigger",
+  mode_toggle: "Toggle Trigger",
+  controller_customization_desc: "This is a demo for button customization. You can try different behaviors here, then apply the same mode on your phone.",
 
   window_minimize: 'Minimize',
   window_maximize: 'Maximize',
   window_restore: 'Restore',
   window_close: 'Close',
 
-  // Add close confirmation dialog translations
   window_close_confirm_title: 'Confirm Action',
-  window_close_confirm_message: 'After closing the desktop app, the mobile app will stop working. Do you want to minimize to system tray?',
+  window_close_confirm_message: 'Once closed, the phone connection will be lost. Minimize to tray instead?',
   window_close_confirm_minimize: 'Minimize',
   window_close_confirm_exit: 'Exit',
   window_close_confirm_cancel: 'Cancel',
 
-  connected_devices: 'Connected devices'
+  connected_devices: 'Connected Devices'
 }

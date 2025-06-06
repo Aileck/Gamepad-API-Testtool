@@ -191,23 +191,14 @@ function startServer(portNumber?: number): void {
       port = currentPort
       const error = await initializeGamepadSystem()
 
-      console.log('GamepadSystem initialization result:', error);
-
       if (error === vigem_error.VIGEM_ERROR_NONE) {
-        console.log('ViGEm initialized successfully');
         console.log('Sending started status');
         mainWindow?.webContents.send('server-status', {
           status: 'started',
           port: port
         })
-        
-        console.log(`WebSocket server started on port ${port}`)
       } else {
         if (error === vigem_error.VIGEM_ERROR_BUS_NOT_FOUND) {
-          console.log("VIGEM_ERROR_BUS_NOT_FOUND current error");
-          console.log(error);
-          console.log("Found error");
-          console.log(vigem_error.VIGEM_ERROR_BUS_NOT_FOUND);
           console.log('Sending VIGEM_ERROR_BUS_NOT_FOUND status');
           mainWindow?.webContents.send('server-status', {
             status: 'error',
@@ -240,8 +231,6 @@ function startServer(portNumber?: number): void {
         totalConnections: connections.size
       })
 
-      console.log(`Client connected: ${clientIp}`)
-
       ws.on('message', (message) => {
         if (clientIp) {
           handleWebSocketMessage(ws, message, clientIp)
@@ -263,11 +252,7 @@ function startServer(portNumber?: number): void {
             mainWindow?.webContents.send('gamepad:disconnected', { id: data.clientId })
             clientMap.delete(id)
             connections.delete(ws)
-            console.log(`Client disconnected: ${clientIp}`)
             break
-          }
-          else {
-            console.log(`Trying to disconnect client ${id} but not found`)
           }
         }
       })
@@ -421,9 +406,6 @@ async function handleWebSocketMessage(ws: WebSocket, message: any, clientIp: str
       }
       ws.send(encode(response))
 
-      if (!id) console.log('Missing id')
-      if (!gamepadType) console.log('Missing gamepadType')
-      if (!gamepadData) console.log('Missing gamepadData')
       return
     }
 
@@ -460,14 +442,10 @@ async function handleWebSocketMessage(ws: WebSocket, message: any, clientIp: str
 }
 
 async function sendMessageToClient(clientId: number, action: string) {
-  console.log(`Sending message to client ${clientId}: ${action}`)
   switch (action) {
     case 'delay_test_request':
       HandleDelayTestRequest(clientId)
       break
-    // case "delay_test_start":
-    //     HandleDelayTestStart(clientId);
-    //     break;
     case 'delay_test_end':
       HandleDelayTestEnd(clientId)
       break
@@ -490,31 +468,11 @@ async function sendMessageToClient(clientId: number, action: string) {
     clientMap.get(clientId)!.isTestingDelay = true
 
     if (ws) {
-      console.log(`Last call Sending delay test message to client ${clientId}`)
       ws.send(encode(response))
     } else {
       console.error(`Client ${clientId} not found`)
     }
   }
-
-  // function HandleDelayTestStart(clientId: number) {
-  //     const response: WebSocketMessage = {
-  //         action: "delay_test_start",
-  //         status: "ok",
-  //         // Send the current UTC time in milliseconds
-  //         payload: clientMap.get(clientId)?.rtt.toString() || "0",
-  //     };
-
-  //     const ws = clientMap.get(clientId)?.websocket;
-  //     clientMap.get(clientId)!.isTestingDelay = true;
-
-  //     if (ws) {
-  //         console.log(`Last call Sending delay test message to client ${clientId}`);
-  //         ws.send(encode(response));
-  //     } else {
-  //         console.error(`Client ${clientId} not found`);
-  //     }
-  // }
 
   function HandleDelayTestEnd(clientId: number) {
     const response: WebSocketMessage = {

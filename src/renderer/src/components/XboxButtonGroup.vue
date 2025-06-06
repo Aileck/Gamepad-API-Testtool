@@ -35,8 +35,6 @@ const gamepadData = ref<GamepadData>({
 
 onMounted(() => {
   window.api.onXboxInput((_, data) => {
-    console.log("Gamepad input: " + data.id);
-
     if (data.id === props.clientId) {
       gamepadData.value = data.gamepadData;
     }

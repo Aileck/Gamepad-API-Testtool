@@ -1,106 +1,117 @@
 export default {
-    preview_version: 'Versión Preliminar',
-    loading_instructions: 'Inicializando sistema, por favor espere...',
-    use_instructions: 'Usa la aplicación móvil Phone2Pad para escanear el código QR o ingresa manualmente la IP y el puerto.<br> Asegúrate de que ambos dispositivos estén conectados a la misma red.',
-    no_internet_instructions: 'Para conectar tu teléfono y computadora, necesitas una conexión a internet estable.',
-    no_vigem_installed_instructions: 'No se detectó el controlador ViGEm. Por favor, descárgalo e instálalo desde este enlace:<br> https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe',
-    unknown_error_instructions: 'Se ha producido un error desconocido. Por favor, intenta reiniciar la aplicación. Si el problema persiste, por favor reinstala la aplicación.',
-  
-    no_internet_connection: 'Sin conexión a internet.',
-    internet_connected: 'Conectado en internet.',
-  
-    ip: 'IP',
-    port: 'Puerto',
-  
-    device: 'Dispositivo',
-  
-    button_help: 'Ayuda',
-    button_language: 'Idioma',
-    button_download: 'Descargar',
-    button_sponsor: 'Patrocinar',
+  preview_version: 'Versión de prueba',
+  loading_instructions: 'Inicializando el sistema, por favor espera... Si este mensaje persiste, comprueba tu conexión a Internet y reinicia el programa.',
+  use_instructions: 'Utiliza la aplicación Phone2Pad en tu móvil para escanear el código QR o introduce manualmente la IP y el puerto.<br> Asegúrate de que ambos dispositivos estén conectados a la misma red.',
+  no_internet_instructions: 'Sin conexión a Internet. Comprueba tu conexión y reinicia el programa.',
+  no_vigem_installed_instructions: 'No se ha detectado el controlador ViGEm. Haz clic en el botón de descarga de la izquierda para instalarlo y reinicia el programa.',
+  unknown_error_instructions: 'Se ha producido un error desconocido. Intenta reiniciar la aplicación. Si el problema persiste, reinstala el programa.',
 
-    language_modal_title: 'Seleccionar idioma',
-    language_modal_en: 'Inglés',
-    language_modal_zh: 'Chino',
-    language_modal_es: 'Español',
+  no_internet_connection: 'Sin conexión a Internet.',
+  internet_connected: 'Conexión a Internet exitosa.',
 
-    download_title: 'Descargar',
-    download_mobile_title: 'Phone2Pad Mobile App.',
-    download_mobile_description: 'Escanea el código QR o ingresa manualmente la IP y el puerto para simular un gamepad en tu teléfono.',
-    download_vigem_title: 'ViGEmBus Driver.',
-    download_vigem_description: 'Vigem driver, necesario para crear un gamepad virtual.',
+  ip: 'IP',
+  port: 'Puerto',
 
-    download_on_itch_io: 'Descargar en itch.io',
-    download_on_github: 'Descargar en GitHub',
-    download_on_baidu_pan: 'Descargar en Baidu Pan',
+  device: 'Dispositivo',
 
-    sponsor_title: 'Apoyar el Proyecto',
-    sponsor_support_title: 'Métodos de Apoyo',
-    sponsor_contact_title: 'Contáctame',
-    sponsor_main_content: `
-      <p>¡Gracias por usar Phone2Pad!</p>
-      <p>La app es totalmente gratuita, pero su desarrollo y mantenimiento requieren tiempo y esfuerzo. Si te ha sido útil, considera usar los <strong>métodos de apoyo a la derecha</strong> para ayudarme a seguir mejorándola.</p>
-      
-      <p>Planes Futuros (dentro lo posible):</p>
-      <ul>
-        <li>Añadir giroscopio y vibración</li>
-        <li>Soporte para botones personalizados y touchbar</li>
-        <li>Desarrollar conexión automática y Bluetooth</li>
-        <li>Soporte para iOS, consolas Linux y PSVita (con tu apoyo, ya que actualmente no puedo costear estos dispositivos 😵)</li>
-      </ul>
+  button_help: 'Ayuda',
+  button_language: 'Idioma',
+  button_download: 'Descargar',
+  button_sponsor: 'Patrocinar',
 
-      <p>No dudes en usar los métodos de contacto a la derecha para contarme que estás usando la app, compartir lo que te gusta o no, ¡y ayudarme a saber que estoy haciendo algo significativo!</p>
-    `,
-    sponsor_bilibili_link: 'https://space.bilibili.com/2459782',
-    send_email: 'Enviar Correo',
-    sponsor_kofi: 'Apoyar en Ko-fi',
-    sponsor_wechat: 'Apoyar por WeChat',
-    help_title: 'Ayuda',
-    help_warning: '⚠️ Esta es una versión preliminar. Puede haber riesgos de fallos y pérdida de datos en futuras actualizaciones.',
-    help_video_placeholder: 'Video tutorial próximamente',
-    help_section_1_title: 'Primeros Pasos',
-    help_section_1_content: `
-      <ul>
-        <li>Instala la aplicación móvil Phone2Pad en tu teléfono</li>
-        <li>Instala el controlador ViGEm en tu PC</li>
-        <li>Asegúrate de que ambos dispositivos estén en la misma red</li>
-        <li>Escanea el código QR o ingresa manualmente la IP y el puerto</li>
-      </ul>
-    `,
-    help_section_2_title: 'Solución de Problemas',
-    help_section_2_content: `
-      <ul>
-        <li>Verifica que los dispositivos estén en la misma red</li>
-        <li>Comprueba que el controlador ViGEm esté instalado correctamente</li>
-        <li>Intenta reiniciar ambas aplicaciones</li>
-        <li>Asegúrate de que el firewall no esté bloqueando la conexión</li>
-      </ul>
-    `,
-    help_section_3_title: 'Características Principales',
-    help_section_3_content: `
+  language_modal_title: 'Seleccionar idioma',
+  language_modal_en: 'Inglés',
+  language_modal_zh: 'Chino',
+  language_modal_es: 'Español',
+
+  download_title: 'Descargas',
+  download_mobile_title: 'App móvil Phone2Pad',
+  download_mobile_description: 'Escanea el código QR o introduce manualmente la IP y el puerto para capturar entradas del mando o simularlas desde el móvil.',
+  download_vigem_title: 'Controlador Windows Phone2Pad',
+  download_vigem_description: 'Instala el controlador ViGEm para habilitar la emulación de mandos.',
+
+  download_on_itch_io: 'Descargar desde itch.io',
+  download_on_github: 'Descargar desde GitHub',
+  download_on_baidu: 'Descargar desde Baidu',
+  download_contact_info: 'Si los enlaces de descarga no funcionan, contacta con Aileck en Bilibili:',
+
+  help_title: 'Ayuda',
+  help_warning: '⚠️ Esta es una versión de prueba. Puede fallar y las futuras actualizaciones podrían causar pérdida de datos.',
+  help_section_1_title: 'Primeros pasos',
+  help_section_main_description: "Phone2Pad es una app compatible con <span style='color: #e6a23c;'>teléfonos y consolas Android</span>. Reconoce entradas de mandos físicos y las traduce a controles en el PC.<br><br>Se compone de dos partes: una <span style='color: #e6a23c;'>app móvil</span> y una <span style='color: #e6a23c;'>versión de escritorio</span> que deben <span style='color: #e6a23c;'>ejecutarse simultáneamente</span>.<br><br>Puedes usar <span style='color: #e6a23c;'>botones virtuales</span> en el móvil o conectar un <span style='color: #e6a23c;'>mando físico</span> para enviar entradas al ordenador.<br><br><span style='color: #e6a23c;'>Compatible con diseños de mando Xbox 360 y DualShock 4</span>.",
+  help_section_1_content: `
     <ul>
-        <li>Utiliza el teléfono como un mando para PC, compatible con botones virtuales y mandos físicos</li>
-        <li>Detecta automáticamente los botones de mandos físicos conectados y transmite las acciones al ordenador</li>
-        <li>Compatible con las distribuciones de mando de Xbox 360 y DualShock 4, con soporte para personalización de diseño y estilo de botones</li>
-        <li>Permite la conexión simultánea de varios dispositivos móviles para juegos multijugador locales</li>
+      <li>Instala la app Phone2Pad en tu móvil</li>
+      <li>Instala el controlador ViGEm en tu PC</li>
+      <li>Ambas descargas están disponibles en la barra lateral izquierda</li>
+      <li>Asegúrate de que ambos dispositivos estén en la misma red</li>
+      <li>Escanea el código QR o introduce la IP y el puerto manualmente</li>
+      <li>¡Disfruta del juego :)!</li>
     </ul>
-    `,
-    help_section_4_title: 'Personalización de Botones',
-    help_video_url: 'https://youtu.be/xxx',
-    help_video_text: 'Ver Tutorial',
+  `,
+  help_section_2_title: 'Preguntas frecuentes',
+  help_section_2_content: `
+    <ul>
+      <li>Asegúrate de que los dispositivos estén en la misma red</li>
+      <li>Verifica que el controlador ViGEm esté correctamente instalado</li>
+      <li>Comprueba que el cortafuegos no bloquee la conexión</li>
+      <li>Reinicia tanto la app móvil como la de escritorio</li>
+    </ul>
+  `,
+  help_section_3_title: 'Funciones principales',
+  help_section_3_content: `
+  <ul>
+      <li>Usa el móvil como mando para el PC, con botones virtuales o mando físico</li>
+      <li>Compatible con diseños de mando Xbox 360 y DualShock 4, con opciones de personalización</li>
+      <li>Soporte para varios dispositivos móviles en juegos multijugador locales</li>
+  </ul>
+  `,
+  help_disclaimer: "*Las menciones a Xbox, DualShock, etc. son solo para indicar compatibilidad. No implican afiliación.",
+  help_section_4_title: 'Configuración de mandos',
+  sponsor_title: 'Apoya el proyecto',
+  sponsor_support_title: 'Opciones de patrocinio',
+  sponsor_contact_title: 'Información de contacto',
+  sponsor_main_content: `
+    <p>¡Gracias por usar Phone2Pad!</p>
+    <p>Esta app es completamente gratuita, pero desarrollarla y mantenerla requiere mucho tiempo y esfuerzo. Si te resulta útil, considera <strong>apoyarme desde las opciones de la derecha</strong> para que pueda seguir mejorándola.</p>
+    
+    <p>Planes futuros (en la medida de lo posible):</p>
+    <ul>
+      <li>Añadir giroscopio y vibración</li>
+      <li>Soporte para personalización de botones y panel táctil</li>
+      <li>Detección automática y conexión por Bluetooth</li>
+      <li>Compatibilidad con iOS, consolas Linux y PS Vita (si consigo financiación para los dispositivos 😵)</li>
+    </ul>
 
-    window_minimize: 'Minimizar',
-    window_maximize: 'Maximizar',
-    window_restore: 'Restaurar',
-    window_close: 'Cerrar',
+    <p>Si quieres compartir tu experiencia o sugerencias, puedes escribirme por los métodos de contacto. ¡Toda opinión es bienvenida!</p>
+  `,
+  sponsor_bilibili_link: 'https://space.bilibili.com/2459782',
+  send_email: 'Enviar correo',
+  bilibili_message: 'Mensaje en Bilibili',
+  sponsor_kofi: 'Patrocinar por Ko-fi',
+  sponsor_wechat: 'Patrocinio por WeChat',
+  sponsor_button_text: 'Abrir Alipay',
+  help_video_url: 'https://www.bilibili.com/video/xxx',
+  help_video_text: 'Ver vídeo tutorial',
+  controller_customization: "Configuración de mandos",
+  xbox_layout: "Diseño Xbox",
+  dualshock_layout: "Diseño DualShock",
+  button_pressed: "Pulsado",
+  mode_default: "Modo por defecto",
+  mode_swipe: "Activación por deslizamiento",
+  mode_toggle: "Activación por interruptor",
+  controller_customization_desc: "Esta es una demo de personalización de botones. Aquí puedes probar distintos comportamientos y luego aplicar lo mismo en el móvil.",
 
-    // Añadir traducciones para el diálogo de confirmación de cierre
-    window_close_confirm_title: 'Confirmar Acción',
-    window_close_confirm_message: 'Después de cerrar la aplicación de escritorio, la aplicación móvil dejará de funcionar. ¿Desea minimizar a la bandeja del sistema?',
-    window_close_confirm_minimize: 'Minimizar',
-    window_close_confirm_exit: 'Salir',
-    window_close_confirm_cancel: 'Cancelar',
+  window_minimize: 'Minimizar',
+  window_maximize: 'Maximizar',
+  window_restore: 'Restaurar',
+  window_close: 'Cerrar',
 
-    connected_devices: 'Dispositivos conectados'
+  window_close_confirm_title: 'Confirmar acción',
+  window_close_confirm_message: 'Si cierras el programa, el móvil perderá la conexión. ¿Minimizar a la bandeja del sistema?',
+  window_close_confirm_minimize: 'Minimizar',
+  window_close_confirm_exit: 'Salir',
+  window_close_confirm_cancel: 'Cancelar',
+
+  connected_devices: 'Dispositivos conectados'
 }
-  

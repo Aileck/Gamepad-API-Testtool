@@ -21,14 +21,10 @@ function resetPreferences() {
                     if (fs.existsSync(leveldbPath)) {
                         // Remove the entire leveldb directory to clear localStorage
                         fs.rmSync(leveldbPath, { recursive: true, force: true });
-                        console.log('Successfully cleared Local Storage data');
                     }
                 });
             }
         }
-        
-        console.log('Preferences reset successfully!');
-        console.log('The help and sponsor buttons will appear orange again on next app launch.');
     } catch (error) {
         console.error('Error resetting preferences:', error);
         process.exit(1);

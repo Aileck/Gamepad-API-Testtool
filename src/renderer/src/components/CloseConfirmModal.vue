@@ -43,19 +43,16 @@ const handleCancel = () => {
 }
 
 const handleMinimize = () => {
-  console.log('Minimize clicked')
   visible.value = false
   window.api.minimizeWindow()
 }
 
 const handleClose = () => {
-  console.log('Close clicked')
   visible.value = false
   window.api.confirmWindowClose(true)
 }
 
 const show = () => {
-  console.log('Show modal called')
   visible.value = true
 }
 

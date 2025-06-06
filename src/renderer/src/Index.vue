@@ -47,7 +47,6 @@ const connectedDevicesCount = computed(() => {
 });
 
 window.api.onWindowCloseRequest(() => {
-  console.log('Received close request')
   closeConfirmModalRef.value?.show()
 })
 
@@ -65,25 +64,19 @@ async function startCommunication() {
 
 onMounted(async () => {
   window.api.onServerStatus((_, data) => {
-    console.log('Received server status:', data);
     if (data.status === 'error') {
       if (data.error === 'VIGEM_ERROR_BUS_NOT_FOUND') {
-        console.log('Setting status to no_vigem');
         serverStatus.value = 'no_vigem';
         showDownloadButton.value = true;
       } else if (data.error === 'NO_NETWORK') {
-        console.log('Setting status to no_network');
         serverStatus.value = 'no_network';
       } else {
-        console.log('Setting status to unknown_error');
         serverStatus.value = 'unknown_error';
       }
     } else if (data.status === 'started') {
-      console.log('Setting status to normal');
       serverStatus.value = 'normal';
       showDownloadButton.value = false;
     }
-    console.log('Current serverStatus:', serverStatus.value);
   });
 
   await awakeCommunication();

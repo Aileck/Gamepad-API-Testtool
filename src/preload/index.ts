@@ -29,7 +29,6 @@ const api = {
 
   onServerStatus: (callback: (event: Electron.IpcRendererEvent, data: { status: string, error?: string }) => void) =>
     ipcRenderer.on('server-status', (event, data) => {
-      console.log('Preload received server-status:', data);
       callback(event, data);
     }),
 

@@ -99,7 +99,7 @@ export default {
     button_pressed: "已按下",
     mode_default: "默认模式",
     mode_swipe: "滑动触发",
-    mode_toggle: "开关模式",
+    mode_toggle: "开关触发",
     controller_customization_desc: "这是一个按键定制的演示。你可以在这里体验不同的按键行为，然后在手机端设置相同的操作模式。",
 
     window_minimize: '最小化',
