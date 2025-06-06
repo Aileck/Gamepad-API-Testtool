@@ -71,9 +71,12 @@ function createWindow(): void {
 
   mainWindow.on('close', (e) => {
     const clientMap = getClientMap()
-    console.log(clientMap.size);
     
-    // 无论有没有客户端连接，都显示确认对话框
+    if (clientMap.size === 0) {
+      mainWindow?.close();
+      return;
+    }
+    
     if (!hasAskedToClose) {
       e.preventDefault()
       mainWindow?.webContents.send('window:close-request')

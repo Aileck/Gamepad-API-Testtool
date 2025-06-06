@@ -121,6 +121,7 @@ defineExpose({
         />
 
         <!-- Getting Started -->
+        <div class="main-content" v-html="t('help_section_main_description')"></div>
         <section id="section1" class="help-section">
           <h3>
             <el-icon><QuestionFilled /></el-icon>
@@ -226,6 +227,9 @@ defineExpose({
           <div class="help-text" v-html="t('help_section_2_content')"></div>
         </section>
       </el-scrollbar>
+    </div>
+    <div class="help-disclaimer">
+      {{ t('help_disclaimer') }}
     </div>
   </el-dialog>
 </template>
@@ -452,5 +456,17 @@ defineExpose({
   color: var(--el-text-color-regular);
   font-size: 14px;
   line-height: 1.6;
+}
+
+.help-disclaimer {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--el-text-color-secondary, #888);
+}
+
+.main-content {
+  font-size: 16px;
+  line-height: 1.3;
 }
 </style> 

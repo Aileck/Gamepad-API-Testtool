@@ -531,9 +531,8 @@ async function sendMessageToClient(clientId: number, action: string) {
   }
 }
 
-// Export clientMap getter
-export function getClientMap(): Map<number, ClientData> {
+function getClientMap(): Map<number, ClientData> {
   return clientMap;
 }
 
-export { initWebSocketManager }
+export { initWebSocketManager, getClientMap }
